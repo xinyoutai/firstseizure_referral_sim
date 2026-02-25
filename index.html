@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Oxford University Hospitals – First Seizure Referral Estimator</title>
+  <style>
+    :root{
+      --bg: #0b1220;           /* dark blue */
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
+      --muted2: rgba(255,255,255,.45);
+      --glow: rgba(255,255,255,.75);
+      --fill: rgba(255,255,255,.18);
+      --fill2: rgba(255,255,255,.07);
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(99, 102, 241, .16), transparent 60%),
+                  radial-gradient(900px 600px at 85% 30%, rgba(14, 165, 233, .10), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+    }
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 16px 48px;
+    }
+    header{
+      display:flex;
+      gap:12px;
+      align-items:flex-end;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom: 18px;
+    }
+    h1{
+      margin:0;
+      font-size: 22px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+    .sub{
+      margin-top:6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      border-radius: 999px;
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+      white-space:nowrap;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap: 16px;
+    }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+    .card{
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 18px;
+      overflow:hidden;
+    }
+    .card .pad{ padding: 16px; }
+    .section-title{
+      font-size: 13px;
+      font-weight: 650;
+      color: rgba(255,255,255,.88);
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top:4px;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .sliderbox{
+      margin-top: 12px;
+      padding: 14px 14px 10px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+    }
+    input[type="range"]{
+      width:100%;
+      accent-color: rgba(255,255,255,.85);
+    }
+    .sliderlabels{
+      display:flex;
+      justify-content:space-between;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted2);
+    }
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    @media (max-width: 520px){
+      .kpis{ grid-template-columns: 1fr; }
+    }
+    .kpi{
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.16);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .kpi .label{ font-size: 11px; color: var(--muted); }
+    .kpi .value{ font-size: 20px; font-weight: 700; color: #fff; margin-top: 4px; }
+    .kpi .note{ font-size: 11px; color: var(--muted2); margin-top: 4px; }
+
+    .throughput{
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.16);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top: 8px; }
+    .chip{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+    }
+
+    .toggles{
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.16);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .toggle{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      margin-top: 10px;
+    }
+    .toggle .tlabel{
+      font-size: 13px;
+      color: rgba(255,255,255,.85);
+      font-weight: 560;
+    }
+    .toggle .tblurb{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+    .switchline{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      white-space:nowrap;
+    }
+    .uplift{
+      font-size: 12px;
+      color: rgba(255,255,255,.70);
+    }
+    /* Simple switch */
+    .switch{
+      position: relative; width: 46px; height: 26px; flex: 0 0 auto;
+    }
+    .switch input{ display:none; }
+    .slider{
+      position:absolute; inset:0;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.20);
+      border-radius: 999px;
+      transition: .2s;
+    }
+    .slider::after{
+      content:"";
+      position:absolute;
+      height: 20px; width: 20px;
+      left: 3px; top: 2px;
+      background: rgba(255,255,255,.85);
+      border-radius: 999px;
+      transition: .2s;
+    }
+    .switch input:checked + .slider{
+      background: rgba(255,255,255,.30);
+    }
+    .switch input:checked + .slider::after{
+      transform: translateX(20px);
+    }
+
+    .mapwrap{
+      padding: 0 16px 16px;
+    }
+    .maphead{
+      padding: 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .maptitle{ font-size: 13px; font-weight: 650; color: rgba(255,255,255,.88); }
+    .mapsub{ margin-top: 4px; font-size: 12px; color: var(--muted); }
+    svg{ display:block; width:100%; height: 280px; }
+    .mapfoot{
+      padding: 0 16px 16px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    code{
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 8px;
+      padding: 2px 6px;
+      font-size: 12px;
+      color: rgba(255,255,255,.82);
+    }
+    footer{
+      margin-top: 16px;
+      font-size: 11px;
+      color: rgba(255,255,255,.42);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Oxford University Hospitals – First Seizure Referral Estimator</h1>
+        <div class="sub">
+          Catchment population set to <span id="pop" style="color:rgba(255,255,255,.86)"></span>. Adjust incidence and optionally include common mimics.
+        </div>
+      </div>
+      <div class="badge" title="Planning estimate only">
+        <span>ℹ️</span><span>Planning estimate only</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Left: calculator -->
+      <div class="card">
+        <div class="pad">
+          <div class="row">
+            <div>
+              <div class="section-title">First unprovoked seizure incidence</div>
+              <div class="hint">per 100,000 population per year (slider range 20–100)</div>
+            </div>
+            <div class="badge"><span id="incText">60</span> / 100,000 / yr</div>
+          </div>
+
+          <div class="sliderbox">
+            <input id="incidence" type="range" min="20" max="100" step="1" value="60" />
+            <div class="sliderlabels">
+              <span>20</span>
+              <span style="color:rgba(255,255,255,.70)">Commonly cited zone: 50–70</span>
+              <span>100</span>
+            </div>
+          </div>
+
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">Base first seizures / year</div>
+              <div class="value" id="baseYear">—</div>
+              <div class="note">(true first unprovoked seizures)</div>
+            </div>
+            <div class="kpi">
+              <div class="label">With selected mimics</div>
+              <div class="value" id="mult">× 1.0</div>
+              <div class="note">uplift factor</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Estimated referrals / year</div>
+              <div class="value" id="totalYear">—</div>
+              <div class="note">first seizure clinic workload</div>
+            </div>
+          </div>
+
+          <div class="throughput">
+            <div class="label" style="font-size:11px;color:var(--muted);">Throughput (approx.)</div>
+            <div class="chips">
+              <div class="chip"><span id="perWeek">—</span> / week</div>
+              <div class="chip"><span id="perMonth">—</span> / month</div>
+            </div>
+            <div class="hint" style="margin-top:10px;">
+              Included categories: <span id="included">None (base only)</span>
+            </div>
+          </div>
+
+          <div class="toggles">
+            <div class="section-title">Include potential mimics</div>
+            <div class="hint">Each toggle adds an uplift on top of the base incidence estimate.</div>
+
+            <div class="toggle">
+              <div>
+                <div class="tlabel">Syncope (incl. atypical vasovagal/orthostatic)</div>
+                <div class="tblurb">Adds +25% of base (common in first-seizure referrals).</div>
+              </div>
+              <div class="switchline">
+                <div class="uplift">+25%</div>
+                <label class="switch"><input id="syncope" type="checkbox" checked /><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="toggle">
+              <div>
+                <div class="tlabel">Functional / dissociative attacks</div>
+                <div class="tblurb">Adds +12% of base.</div>
+              </div>
+              <div class="switchline">
+                <div class="uplift">+12%</div>
+                <label class="switch"><input id="functional" type="checkbox" /><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="toggle">
+              <div>
+                <div class="tlabel">Panic / anxiety events</div>
+                <div class="tblurb">Adds +6% of base.</div>
+              </div>
+              <div class="switchline">
+                <div class="uplift">+6%</div>
+                <label class="switch"><input id="panic" type="checkbox" /><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="toggle">
+              <div>
+                <div class="tlabel">TIA / migraine / other neuro mimics</div>
+                <div class="tblurb">Adds +7% of base.</div>
+              </div>
+              <div class="switchline">
+                <div class="uplift">+7%</div>
+                <label class="switch"><input id="tias" type="checkbox" /><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="hint" style="margin-top:12px;">
+              You can tune these uplift percentages in the code to match a local audit.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: map -->
+      <div class="card">
+        <div class="maphead">
+          <div>
+            <div class="maptitle">BOB region context</div>
+            <div class="mapsub">Buckinghamshire · Oxfordshire · Berkshire West (Oxfordshire boundary from GeoJSON)</div>
+          </div>
+          <div class="badge">Oxfordshire catchment highlighted</div>
+        </div>
+
+        <div class="mapwrap">
+          <svg viewBox="0 0 780 420" aria-label="Map of BOB region with Oxfordshire highlighted">
+            <defs>
+              <linearGradient id="mbg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.06)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0.02)"/>
+              </linearGradient>
+              <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="8" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            <rect x="0" y="0" width="780" height="420" fill="url(#mbg)"></rect>
+
+            <!-- Berkshire West (schematic) -->
+            <path d="M95,305 L210,255 L300,290 L285,370 L140,392 Z"
+                  fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="2"></path>
+
+            <!-- Buckinghamshire (schematic) -->
+            <path d="M430,108 L640,130 L705,220 L642,310 L470,308 L520,178 Z"
+                  fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="2"></path>
+
+            <!-- Oxfordshire outline (accurate when loaded) -->
+            <path id="oxfordshirePath"
+                  d="M225,125 L430,108 L520,178 L470,308 L310,338 L210,255 Z"
+                  fill="rgba(255,255,255,0.20)" stroke="rgba(255,255,255,0.70)"
+                  stroke-width="2.2" filter="url(#softGlow)"></path>
+
+            <!-- Oxford marker -->
+            <circle cx="380" cy="225" r="7" fill="rgba(255,255,255,0.90)"></circle>
+            <circle cx="380" cy="225" r="18" fill="rgba(255,255,255,0.10)"></circle>
+            <text x="402" y="230" fill="rgba(255,255,255,0.88)" font-size="14"
+                  font-family="ui-sans-serif, system-ui">Oxford</text>
+
+            <!-- Labels -->
+            <text x="135" y="325" fill="rgba(255,255,255,0.70)" font-size="16"
+                  font-family="ui-sans-serif, system-ui">Berkshire West</text>
+            <text x="295" y="140" fill="rgba(255,255,255,0.80)" font-size="16"
+                  font-family="ui-sans-serif, system-ui">Oxfordshire</text>
+            <text x="520" y="155" fill="rgba(255,255,255,0.70)" font-size="16"
+                  font-family="ui-sans-serif, system-ui">Buckinghamshire</text>
+          </svg>
+        </div>
+
+        <div class="mapfoot" id="mapStatus">Loading Oxfordshire boundary…</div>
+      </div>
+    </div>
+
+    <footer>
+      Demo tool. Oxfordshire boundary source: <code>glynnbird/ukcountiesgeojson</code> (raw GeoJSON fetch). Uplifts are illustrative—replace with local audit data for operational planning.
+    </footer>
+  </div>
+
+  <script>
+    // ----- Parameters -----
+    const CATCHMENT_POPULATION = 805000;
+
+    const uplifts = [
+      { key: "syncope", label: "Syncope", uplift: 0.25 },
+      { key: "functional", label: "Functional", uplift: 0.12 },
+      { key: "panic", label: "Panic", uplift: 0.06 },
+      { key: "tias", label: "TIA/migraine/other", uplift: 0.07 }
+    ];
+
+    const OXFORDSHIRE_GEOJSON_URL =
+      "https://raw.githubusercontent.com/glynnbird/ukcountiesgeojson/master/oxfordshire.geojson";
+
+    // ----- Formatting -----
+    const fmtInt = (n) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(n);
+    const fmt1 = (n) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(n);
+
+    // ----- Calculator -----
+    const el = (id) => document.getElementById(id);
+
+    function getIncidence() {
+      return Number(el("incidence").value || 60);
+    }
+
+    function getMultiplier() {
+      let m = 1;
+      const inc = [];
+      for (const u of uplifts) {
+        const on = !!el(u.key).checked;
+        if (on) { m += u.uplift; inc.push(`+${Math.round(u.uplift * 100)}% ${u.label}`); }
+      }
+      return { m, inc };
+    }
+
+    function recalc() {
+      const rate = getIncidence();
+      el("incText").textContent = rate;
+
+      const base = (rate / 100000) * CATCHMENT_POPULATION;
+      const { m, inc } = getMultiplier();
+      const total = base * m;
+
+      el("baseYear").textContent = fmtInt(base);
+      el("mult").textContent = "× " + fmt1(m);
+      el("totalYear").textContent = fmtInt(total);
+      el("perWeek").textContent = fmt1(total / 52);
+      el("perMonth").textContent = fmt1(total / 12);
+      el("included").textContent = inc.length ? inc.join(" · ") : "None (base only)";
+    }
+
+    el("pop").textContent = fmtInt(CATCHMENT_POPULATION);
+
+    ["incidence","syncope","functional","panic","tias"].forEach(id => {
+      el(id).addEventListener("input", recalc);
+      el(id).addEventListener("change", recalc);
+    });
+    recalc();
+
+    // ----- Map rendering (Oxfordshire GeoJSON -> SVG path) -----
+    function extractGeometry(gj) {
+      if (!gj) return null;
+      if (gj.type === "FeatureCollection") return gj.features?.[0]?.geometry || null;
+      if (gj.type === "Feature") return gj.geometry || null;
+      if (gj.type && gj.coordinates) return gj;
+      return null;
+    }
+
+    function collectCoords(geom) {
+      const out = [];
+      const pushRing = (ring) => {
+        if (!Array.isArray(ring)) return;
+        for (const pt of ring) {
+          if (Array.isArray(pt) && pt.length >= 2) out.push([pt[0], pt[1]]);
+        }
+      };
+      if (!geom) return out;
+      if (geom.type === "Polygon") {
+        for (const ring of (geom.coordinates || [])) pushRing(ring);
+      } else if (geom.type === "MultiPolygon") {
+        for (const poly of (geom.coordinates || [])) {
+          for (const ring of (poly || [])) pushRing(ring);
+        }
+      } else if (geom.type === "GeometryCollection") {
+        for (const g of (geom.geometries || [])) out.push(...collectCoords(g));
+      }
+      return out;
+    }
+
+    function buildSvgPath(geom, viewW, viewH, pad = 18) {
+      const coords = collectCoords(geom);
+      if (!coords.length) return null;
+
+      let minLon = Infinity, maxLon = -Infinity, minLat = Infinity, maxLat = -Infinity;
+      for (const [lon, lat] of coords) {
+        if (lon < minLon) minLon = lon;
+        if (lon > maxLon) maxLon = lon;
+        if (lat < minLat) minLat = lat;
+        if (lat > maxLat) maxLat = lat;
+      }
+
+      const spanLon = Math.max(1e-9, maxLon - minLon);
+      const spanLat = Math.max(1e-9, maxLat - minLat);
+
+      const usableW = Math.max(1, viewW - pad * 2);
+      const usableH = Math.max(1, viewH - pad * 2);
+      const s = Math.min(usableW / spanLon, usableH / spanLat);
+
+      const offsetX = (viewW - spanLon * s) / 2;
+      const offsetY = (viewH - spanLat * s) / 2;
+
+      const proj = ([lon, lat]) => {
+        const x = offsetX + (lon - minLon) * s;
+        const y = offsetY + (maxLat - lat) * s; // invert y
+        return [x, y];
+      };
+
+      const ringToPath = (ring) => {
+        if (!ring?.length) return "";
+        const [x0, y0] = proj(ring[0]);
+        let d = `M ${x0.toFixed(2)} ${y0.toFixed(2)}`;
+        for (let i = 1; i < ring.length; i++) {
+          const [x, y] = proj(ring[i]);
+          d += ` L ${x.toFixed(2)} ${y.toFixed(2)}`;
+        }
+        return d + " Z";
+      };
+
+      let d = "";
+      if (geom.type === "Polygon") {
+        for (const ring of (geom.coordinates || [])) d += ringToPath(ring) + " ";
+      } else if (geom.type === "MultiPolygon") {
+        for (const poly of (geom.coordinates || [])) {
+          for (const ring of (poly || [])) d += ringToPath(ring) + " ";
+        }
+      }
+      return d.trim();
+    }
+
+    async function loadOxfordshire() {
+      const statusEl = el("mapStatus");
+      try {
+        statusEl.textContent = "Loading Oxfordshire boundary…";
+        const res = await fetch(OXFORDSHIRE_GEOJSON_URL, { cache: "force-cache" });
+        if (!res.ok) throw new Error("Fetch failed (" + res.status + ")");
+        const gj = await res.json();
+        const geom = extractGeometry(gj);
+        const path = buildSvgPath(geom, 780, 420);
+        if (!path) throw new Error("Could not parse Oxfordshire geometry");
+        el("oxfordshirePath").setAttribute("d", path);
+        statusEl.textContent = "Oxfordshire outline loaded from GeoJSON.";
+      } catch (e) {
+        statusEl.textContent = "Couldn’t load Oxfordshire GeoJSON (showing fallback): " + (e?.message || e);
+      }
+    }
+    loadOxfordshire();
+  </script>
+</body>
+</html>
