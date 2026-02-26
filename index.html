@@ -8,7 +8,6 @@
     :root{
       --bg: #0b1220;
       --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.04);
       --border: rgba(255,255,255,.12);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.62);
@@ -23,34 +22,12 @@
                   var(--bg);
       color: var(--text);
     }
-    .wrap{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 16px 48px;
-    }
-    header{
-      display:flex;
-      gap:12px;
-      align-items:flex-end;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      margin-bottom: 18px;
-    }
-    h1{
-      margin:0;
-      font-size: 22px;
-      font-weight: 650;
-      letter-spacing: -0.01em;
-    }
-    .sub{
-      margin-top:6px;
-      font-size: 13px;
-      color: var(--muted);
-    }
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 28px 16px 48px; }
+    header{ display:flex; gap:12px; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; margin-bottom: 18px; }
+    h1{ margin:0; font-size: 28px; font-weight: 650; letter-spacing: -0.01em; }
+    .sub{ margin-top:6px; font-size: 16px; color: var(--muted); }
     .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
+      display:inline-flex; align-items:center; gap:8px;
       padding: 6px 10px;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.05);
@@ -59,192 +36,59 @@
       color: rgba(255,255,255,.78);
       white-space:nowrap;
     }
-    .grid{
-      display:grid;
-      grid-template-columns: 1.4fr .9fr;
-      gap: 16px;
-      align-items:start;
-    }
-    @media (max-width: 720px){
-      .grid{ grid-template-columns: 1fr; }
-    }
-    .card{
-      border: 1px solid var(--border);
-      background: var(--panel);
-      border-radius: 18px;
-      overflow:hidden;
-    }
+    .grid{ display:grid; grid-template-columns: 1.4fr .9fr; gap: 16px; align-items:start; }
+    @media (max-width: 720px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{ border: 1px solid var(--border); background: var(--panel); border-radius: 18px; overflow:hidden; }
     .card .pad{ padding: 16px; }
-    .section-title{
-      font-size: 13px;
-      font-weight: 650;
-      color: rgba(255,255,255,.88);
-    }
-    .hint{
-      font-size: 12px;
-      color: var(--muted);
-      margin-top:4px;
-    }
-    .row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .sliderbox{
-      margin-top: 12px;
-      padding: 14px 14px 10px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,.18);
-    }
-    input[type="range"]{
-      width:100%;
-      accent-color: rgba(255,255,255,.85);
-    }
-    .sliderlabels{
-      display:flex;
-      justify-content:space-between;
-      margin-top: 8px;
-      font-size: 11px;
-      color: var(--muted2);
-    }
-    .kpis{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 14px;
-    }
-    @media (max-width: 520px){
-      .kpis{ grid-template-columns: 1fr; }
-    }
-    .kpi{
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,.16);
-      border-radius: 16px;
-      padding: 12px;
-    }
+
+    .section-title{ font-size: 16px; font-weight: 650; color: rgba(255,255,255,.88); }
+    .hint{ font-size: 12px; color: var(--muted); margin-top:4px; }
+
+    .row{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .sliderbox{ margin-top: 12px; padding: 14px 14px 10px; border-radius: 16px; border: 1px solid var(--border); background: rgba(0,0,0,.18); }
+    input[type="range"]{ width:100%; accent-color: rgba(255,255,255,.85); }
+    .sliderlabels{ display:flex; justify-content:space-between; margin-top: 8px; font-size: 11px; color: var(--muted2); }
+
+    .kpis{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+    @media (max-width: 520px){ .kpis{ grid-template-columns: 1fr; } }
+
+    .kpi{ border: 1px solid var(--border); background: rgba(0,0,0,.16); border-radius: 16px; padding: 12px; }
     .kpi .label{ font-size: 11px; color: var(--muted); }
     .kpi .value{ font-size: 20px; font-weight: 700; color: #fff; margin-top: 4px; }
+    .kpi .bigvalue{ font-size: 20px; font-weight: 700; color: #fff; margin-top: 4px; }
     .kpi .note{ font-size: 11px; color: var(--muted2); margin-top: 4px; }
 
-    .throughput{
-      margin-top: 12px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,.16);
-      border-radius: 16px;
-      padding: 12px;
-    }
+    .throughput{ margin-top: 12px; border: 1px solid var(--border); background: rgba(0,0,0,.16); border-radius: 16px; padding: 12px; }
     .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top: 8px; }
-    .chip{
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.05);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 12px;
-      color: rgba(255,255,255,.78);
-    }
+    .chip{ border: 1px solid var(--border); background: rgba(255,255,255,.05); border-radius: 999px; padding: 6px 10px; font-size: 12px; color: rgba(255,255,255,.78); }
 
-    .toggles{
-      margin-top: 14px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,.16);
-      border-radius: 16px;
-      padding: 12px;
-    }
-    .toggle{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      margin-top: 10px;
-    }
-    .toggle .tlabel{
-      font-size: 13px;
-      color: rgba(255,255,255,.85);
-      font-weight: 560;
-    }
-    .toggle .tblurb{
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 4px;
-      line-height: 1.3;
-    }
-    .switchline{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      white-space:nowrap;
-    }
-    .uplift{
-      font-size: 12px;
-      color: rgba(255,255,255,.70);
-    }
+    .toggles{ margin-top: 14px; border: 1px solid var(--border); background: rgba(0,0,0,.16); border-radius: 16px; padding: 12px; }
+    .toggle{ display:flex; align-items:flex-start; justify-content:space-between; gap: 12px; padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.04); margin-top: 10px; }
+    .toggle .tlabel{ font-size: 13px; color: rgba(255,255,255,.85); font-weight: 560; }
+    .toggle .tblurb{ font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.3; }
+
+    .switchline{ display:flex; align-items:center; gap: 10px; white-space:nowrap; }
+    .uplift{ font-size: 12px; color: rgba(255,255,255,.70); }
+
     /* Simple switch */
-    .switch{
-      position: relative; width: 46px; height: 26px; flex: 0 0 auto;
-    }
+    .switch{ position: relative; width: 46px; height: 26px; flex: 0 0 auto; }
     .switch input{ display:none; }
-    .slider{
-      position:absolute; inset:0;
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.20);
-      border-radius: 999px;
-      transition: .2s;
-    }
-    .slider::after{
-      content:"";
-      position:absolute;
-      height: 20px; width: 20px;
-      left: 3px; top: 2px;
-      background: rgba(255,255,255,.85);
-      border-radius: 999px;
-      transition: .2s;
-    }
-    .switch input:checked + .slider{
-      background: rgba(255,255,255,.30);
-    }
-    .switch input:checked + .slider::after{
-      transform: translateX(20px);
-    }
+    .slider{ position:absolute; inset:0; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.20); border-radius: 999px; transition: .2s; }
+    .slider::after{ content:""; position:absolute; height: 20px; width: 20px; left: 3px; top: 2px; background: rgba(255,255,255,.85); border-radius: 999px; transition: .2s; }
+    .switch input:checked + .slider{ background: rgba(255,255,255,.30); }
+    .switch input:checked + .slider::after{ transform: translateX(20px); }
 
-    .mapwrap{
-      padding: 0 16px 16px;
-    }
-    .maphead{
-      padding: 16px;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
+    .mapwrap{ padding: 0 16px 16px; }
+    .maphead{ padding: 16px; display:flex; justify-content:space-between; align-items:flex-start; gap: 12px; border-bottom: 1px solid rgba(255,255,255,.08); }
     .maptitle{ font-size: 13px; font-weight: 650; color: rgba(255,255,255,.88); }
     .mapsub{ margin-top: 4px; font-size: 12px; color: var(--muted); }
     svg{ display:block; width:100%; height: 280px; }
-    .mapfoot{
-      padding: 0 16px 16px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    code{
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 8px;
-      padding: 2px 6px;
-      font-size: 12px;
-      color: rgba(255,255,255,.82);
-    }
-    footer{
-      margin-top: 16px;
-      font-size: 11px;
-      color: rgba(255,255,255,.42);
-    }
+    .mapfoot{ padding: 0 16px 16px; font-size: 12px; color: var(--muted); }
+
+    code{ background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.10); border-radius: 8px; padding: 2px 6px; font-size: 12px; color: rgba(255,255,255,.82); }
+
+    footer{ margin-top: 16px; font-size: 11px; color: rgba(255,255,255,.42); }
   </style>
 </head>
 <body>
@@ -306,9 +150,7 @@
               <div class="chip"><span id="perWeek">—</span> / week</div>
               <div class="chip"><span id="perMonth">—</span> / month</div>
             </div>
-            <div class="hint" style="margin-top:10px;">
-              Included categories: <span id="included">None (base only)</span>
-            </div>
+            <div class="hint" style="margin-top:10px;">Included categories: <span id="included">None (base only)</span></div>
           </div>
 
           <div class="toggles">
@@ -359,21 +201,19 @@
               </div>
             </div>
 
-            <div class="hint" style="margin-top:12px;">
-              You can tune these uplift percentages in the code to match a local audit.
-            </div>
+            <div class="hint" style="margin-top:12px;">You can tune these uplift percentages in the code to match a local audit.</div>
           </div>
 
           <!-- Weekly clinic simulation -->
           <div class="toggles" style="margin-top:14px;">
-            <div class="section-title">Weekly clinic simulation</div>
-            <div class="hint">Simulate how the outstanding first-fit appointments (backlog) changes week-by-week given the current referral estimate and your weekly capacity.</div>
+            <div class="section-title">Meeting demand - simulating weekly appointments against referrals</div>
+            <div class="hint">simulate how the outstanding first-fit referrals (+backlog) changes week-by-week given the current referral estimate and available capacity</div>
 
             <div class="kpis" style="margin-top:12px;">
               <div class="kpi" style="grid-column: 1 / -1;">
                 <div class="label">Estimated new referrals / week (from current settings)</div>
                 <div class="value" id="simRefPerWeek">—</div>
-                <div class="note">This updates automatically when incidence or mimics change.</div>
+                <div class="hint" style="margin-top:4px;">This updates automatically when incidence or mimics change.</div>
               </div>
             </div>
 
@@ -389,9 +229,7 @@
               </div>
             </div>
 
-            <div class="hint" style="margin-top:8px;">
-              Effective weekly demand = <code>ceil(referrals/week × (1 + DNA%))</code>.
-            </div>
+            <div class="hint" style="margin-top:8px;">Effective weekly demand = <code>ceil(referrals/week × (1 + DNA%))</code>.</div>
 
             <div class="toggle" style="margin-top:12px;">
               <div>
@@ -413,21 +251,16 @@
                 <div class="badge"><span id="capText">0</span> / week</div>
               </div>
               <input id="capacity" type="range" min="0" max="30" step="1" value="0" />
-              <div class="sliderlabels">
-                <span>0</span>
-                <span>30</span>
-              </div>
+              <div class="sliderlabels"><span>0</span><span>30</span></div>
             </div>
 
-            <div class="hint" style="margin-top:10px;">
-              Chart (right) shows backlog over 52 weeks: <code>backlog(t+1) = max(0, backlog(t) + demand/week − capacity/week)</code>.
-            </div>
+            <div class="hint" style="margin-top:10px;">Chart (right) shows backlog over 52 weeks: <code>backlog(t+1) = max(0, backlog(t) + demand/week − capacity/week)</code>.</div>
 
             <div class="kpis" style="margin-top:12px;">
               <div class="kpi" style="grid-column: 1 / -1;">
                 <div class="label">Time to clear current backlog (weeks)</div>
                 <div class="value" id="waitWeeks">—</div>
-                <div class="note">This is the time to clear the existing backlog assuming capacity &gt; demand. Capped at 156 weeks (3 years).</div>
+                <div class="hint" style="margin-top:4px;">This is the time to clear the existing backlog assuming capacity &gt; demand. Capped at 156 weeks (3 years).</div>
               </div>
             </div>
 
@@ -435,7 +268,15 @@
               <div class="kpi" style="grid-column: 1 / -1;">
                 <div class="label">Estimated wait for a referral added today (weeks)</div>
                 <div class="value" id="waitNewReferral">—</div>
-                <div class="note">Approximate wait based on current backlog ÷ appointments per week (intuitive patient-level estimate).</div>
+                <div class="hint" style="margin-top:4px;">Approximate wait based on current backlog ÷ appointments per week (intuitive patient-level estimate).</div>
+              </div>
+            </div>
+
+            <div class="kpis" style="margin-top:12px;">
+              <div class="kpi" style="grid-column: 1 / -1; background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.20);">
+                <div class="label">NICE quality standard</div>
+                <div class="hint" style="margin-top:6px; font-size:16px;">Target ≤2 weeks.</div>
+                <div class="note">NICE QS211: first seizure assessment by a clinical expert within 2 weeks of referral.</div>
               </div>
             </div>
 
@@ -461,17 +302,51 @@
                 </div>
               </div>
 
-              <div class="hint" style="margin-top:10px;">
-                Planning estimate only. Individual risk varies widely (e.g., uncontrolled tonic-clonic seizures greatly increase risk).
+              <div class="hint" style="margin-top:10px;">Planning estimate only. Individual risk varies widely (e.g., uncontrolled tonic-clonic seizures greatly increase risk).</div>
+            </div>
+          </div>
+
+          <div class="toggles" style="margin-top:14px;">
+            <div class="section-title">Other clinical resources</div>
+            <div class="hint">Indicative investigation capacity implied by the current referral estimate. NICE guidance commonly references EEG within 72 hours (where appropriate) and prompt neuroimaging.</div>
+
+            <div class="toggle" style="margin-top:12px;">
+              <div>
+                <div class="tlabel">Investigation rate</div>
+                <div class="tblurb">Percentage of referrals that require EEG/MRI for planning (100% = all referrals).</div>
+              </div>
+              <div class="switchline" style="align-items:center;">
+                <input id="investigationRate" type="number" min="0" max="100" step="1" value="100"
+                       style="width:110px; padding:8px 10px; border-radius:12px; border:1px solid rgba(255,255,255,.16); background: rgba(0,0,0,.18); color: rgba(255,255,255,.9);" />
+                <div class="uplift">%</div>
               </div>
             </div>
+
+            <div class="kpis" style="margin-top:12px;">
+              <div class="kpi">
+                <div class="label">EEGs required / year (planning)</div>
+                <div class="bigvalue" id="eegYear">—</div>
+                <div class="note"><span id="invRateText">100</span>% of referrals × 1 EEG.</div>
+              </div>
+              <div class="kpi">
+                <div class="label">MRI head required / year (planning)</div>
+                <div class="bigvalue" id="mriYear">—</div>
+                <div class="note"><span id="invRateText2">100</span>% of referrals × 1 MRI head.</div>
+              </div>
+              <div class="kpi">
+                <div class="label">NICE notes</div>
+                <div class="value">EEG ≤72h</div>
+                <div class="note">and prompt neuroimaging (where appropriate)</div>
+              </div>
+            </div>
+
+            <div class="hint" style="margin-top:10px;">You can change the assumptions (e.g., proportion needing EEG/MRI) in the JS constants.</div>
           </div>
         </div>
       </div>
 
       <!-- Right: figures -->
       <div style="display:flex;flex-direction:column;gap:16px;">
-
         <!-- Map -->
         <div class="card">
           <div class="maphead">
@@ -517,22 +392,16 @@
               <!-- Oxford marker -->
               <circle cx="380" cy="225" r="7" fill="rgba(255,255,255,0.90)"></circle>
               <circle cx="380" cy="225" r="18" fill="rgba(255,255,255,0.10)"></circle>
-              <text x="402" y="230" fill="rgba(255,255,255,0.88)" font-size="14"
-                    font-family="ui-sans-serif, system-ui">Oxford</text>
+              <text x="402" y="230" fill="rgba(255,255,255,0.88)" font-size="14" font-family="ui-sans-serif, system-ui">Oxford</text>
 
               <!-- Labels -->
-              <text x="135" y="325" fill="rgba(255,255,255,0.70)" font-size="16"
-                    font-family="ui-sans-serif, system-ui">Berkshire West</text>
-              <text x="295" y="140" fill="rgba(255,255,255,0.80)" font-size="16"
-                    font-family="ui-sans-serif, system-ui">Oxfordshire</text>
-              <text x="520" y="155" fill="rgba(255,255,255,0.70)" font-size="16"
-                    font-family="ui-sans-serif, system-ui">Buckinghamshire</text>
+              <text x="135" y="325" fill="rgba(255,255,255,0.70)" font-size="16" font-family="ui-sans-serif, system-ui">Berkshire West</text>
+              <text x="295" y="140" fill="rgba(255,255,255,0.80)" font-size="16" font-family="ui-sans-serif, system-ui">Oxfordshire</text>
+              <text x="520" y="155" fill="rgba(255,255,255,0.70)" font-size="16" font-family="ui-sans-serif, system-ui">Buckinghamshire</text>
             </svg>
           </div>
 
           <div class="mapfoot" id="mapStatus">Loading Oxfordshire boundary…</div>
-        
-          
         </div>
 
         <!-- Backlog chart -->
@@ -552,9 +421,6 @@
           </div>
           <div class="mapfoot" id="chartStatus">Set baseline backlog and weekly capacity to see the projection.</div>
         </div>
-
-
-        
       </div>
     </div>
 
@@ -562,91 +428,72 @@
       Demo tool. Oxfordshire boundary source: <code>glynnbird/ukcountiesgeojson</code> (raw GeoJSON fetch). Uplifts are illustrative—replace with local audit data for operational planning.
 
       <div style="margin-top:24px;border:1px solid var(--border);background:rgba(0,0,0,.18);border-radius:16px;padding:16px;">
-        <div style="font-size:13px;font-weight:650;margin-bottom:10px;">
-          Evidence & References
-        </div>
+        <div style="font-size:13px;font-weight:650;margin-bottom:10px;">Evidence &amp; References</div>
 
-        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">
-          Incidence of first unprovoked seizure (commonly cited ~50–70 per 100,000/year):
-        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Incidence of first unprovoked seizure (commonly cited ~50–70 per 100,000/year):</div>
 
         <ol style="font-size:12px;color:rgba(255,255,255,.75);padding-left:18px;line-height:1.4;">
           <li>
             Neligan A. The epidemiology of epilepsy. <em>Epilepsy Society</em>. 2015.
             Reports first unprovoked seizure incidence typically 50–70 per 100,000/year in industrialised countries.
             <br>
-            <a href="https://epilepsysociety.org.uk/sites/default/files/2020-08/Chapter01Neligan-2015_0.pdf" target="_blank" style="color:#7dd3fc;">
-              https://epilepsysociety.org.uk/sites/default/files/2020-08/Chapter01Neligan-2015_0.pdf
-            </a>
+            <a href="https://epilepsysociety.org.uk/sites/default/files/2020-08/Chapter01Neligan-2015_0.pdf" target="_blank" rel="noreferrer" style="color:#7dd3fc;">https://epilepsysociety.org.uk/sites/default/files/2020-08/Chapter01Neligan-2015_0.pdf</a>
           </li>
-
           <li>
             Rizvi S, Ladino LD, Hernandez-Ronquillo L, Téllez-Zenteno JF.
             Incidence and prevalence of epilepsy and unprovoked seizures.
             <em>Seizure</em>. 2017;49:13-18.
             <br>
-            <a href="https://www.seizure-journal.com/article/S1059-1311(17)30118-8/fulltext" target="_blank" style="color:#7dd3fc;">
-              https://www.seizure-journal.com/article/S1059-1311(17)30118-8/fulltext
-            </a>
+            <a href="https://www.seizure-journal.com/article/S1059-1311(17)30118-8/fulltext" target="_blank" rel="noreferrer" style="color:#7dd3fc;">https://www.seizure-journal.com/article/S1059-1311(17)30118-8/fulltext</a>
           </li>
         </ol>
 
-        <div style="font-size:12px;color:var(--muted);margin-top:10px;margin-bottom:6px;">
-          Seizure mimics in first seizure clinics (informing uplift factors):
-        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;margin-bottom:6px;">Seizure mimics in first seizure clinics (informing uplift factors):</div>
 
         <ol start="3" style="font-size:12px;color:rgba(255,255,255,.75);padding-left:18px;line-height:1.4;">
           <li>
             UK first seizure clinic audits report approximately 30–50% of referrals are ultimately diagnosed as seizure mimics.
             Example:
             <br>
-            <a href="https://www.seizure-journal.com/article/S1059-1311(23)00225-X/fulltext" target="_blank" style="color:#7dd3fc;">
-              Seizure Journal (2023 audit)
-            </a>
+            <a href="https://www.seizure-journal.com/article/S1059-1311(23)00225-X/fulltext" target="_blank" rel="noreferrer" style="color:#7dd3fc;">Seizure Journal (2023 audit)</a>
           </li>
-
           <li>
             St George’s Hospital first seizure clinic audit: 41.7% mimics overall;
             syncope ~22%, functional/dissociative attacks ~6%, TIA ~1–2%.
             <br>
-            <a href="https://reference-global.com/download/article/10.21307/joepi-2017-0004.pdf" target="_blank" style="color:#7dd3fc;">
-              https://reference-global.com/download/article/10.21307/joepi-2017-0004.pdf
-            </a>
+            <a href="https://reference-global.com/download/article/10.21307/joepi-2017-0004.pdf" target="_blank" rel="noreferrer" style="color:#7dd3fc;">https://reference-global.com/download/article/10.21307/joepi-2017-0004.pdf</a>
           </li>
-
           <li>
             NIHR Evidence alert summarising recurrence after a first unprovoked seizure (meta-analysis): 36% have a second seizure within 1 year.
             <br>
-            <a href="https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/" target="_blank" style="color:#7dd3fc;">
-              https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/
-            </a>
+            <a href="https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/" target="_blank" rel="noreferrer" style="color:#7dd3fc;">https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/</a>
           </li>
-
           <li>
             American Academy of Neurology / American Epilepsy Society practice guideline: SUDEP incidence in adults ~1.2 per 1,000 patient-years (systematic review).
             <br>
-            <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/" target="_blank" style="color:#7dd3fc;">
-              https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/
-            </a>
+            <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/" target="_blank" rel="noreferrer" style="color:#7dd3fc;">https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/</a>
           </li>
-
           <li>
             NICE evidence review notes overall SUDEP rate around 1 in 1,000 people with epilepsy per year.
             <br>
-            <a href="https://www.ncbi.nlm.nih.gov/books/NBK591158/" target="_blank" style="color:#7dd3fc;">
-              https://www.ncbi.nlm.nih.gov/books/NBK591158/
-            </a>
+            <a href="https://www.ncbi.nlm.nih.gov/books/NBK591158/" target="_blank" rel="noreferrer" style="color:#7dd3fc;">https://www.ncbi.nlm.nih.gov/books/NBK591158/</a>
+          </li>
+          <li>
+            NICE Quality Standard QS211 (Quality statement 1): first seizure assessment by a clinical expert within 2 weeks of referral.
+            <br>
+            <a href="https://www.nice.org.uk/guidance/qs211/chapter/Quality-statement-1-Referral-and-assessment-after-first-seizure" target="_blank" rel="noreferrer" style="color:#7dd3fc;">https://www.nice.org.uk/guidance/qs211/chapter/Quality-statement-1-Referral-and-assessment-after-first-seizure</a>
           </li>
         </ol>
 
-        <div style="font-size:11px;color:var(--muted2);margin-top:10px;">
-          Uplift percentages and SUDEP calculations are illustrative planning defaults and should be calibrated using local service data.
-        </div>
+        <div style="font-size:11px;color:var(--muted2);margin-top:10px;">Uplift percentages and SUDEP calculations are illustrative planning defaults and should be calibrated using local service data.</div>
       </div>
     </footer>
   </div>
 
   <script>
+    // ----- DOM helpers -----
+    const el = (id) => document.getElementById(id);
+
     // ----- Parameters -----
     const CATCHMENT_POPULATION = 805000;
 
@@ -655,6 +502,10 @@
 
     // SUDEP incidence (general epilepsy population): ~1 per 1,000 person-years
     const SUDEP_PER_1000_PY = 1.0;
+
+    // Planning assumptions for investigations (edit as needed)
+    const EEG_PER_REFERRAL = 1.0;
+    const MRI_PER_REFERRAL = 1.0;
 
     const uplifts = [
       { key: "syncope", label: "Syncope", uplift: 0.25 },
@@ -670,18 +521,21 @@
     const fmtInt = (n) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(n);
     const fmt1 = (n) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(n);
 
-    // ----- Calculator -----
-    const el = (id) => document.getElementById(id);
-
     function getIncidence() {
-      return Number(el("incidence").value || 60);
+      return Number(el("incidence")?.value || 60);
+    }
+
+    function getInvestigationRate() {
+      const v = Number(el("investigationRate")?.value ?? 100);
+      if (!isFinite(v)) return 100;
+      return Math.min(100, Math.max(0, v));
     }
 
     function getMultiplier() {
       let m = 1;
       const inc = [];
       for (const u of uplifts) {
-        const on = !!el(u.key).checked;
+        const on = !!el(u.key)?.checked;
         if (on) { m += u.uplift; inc.push(`+${Math.round(u.uplift * 100)}% ${u.label}`); }
       }
       return { m, inc };
@@ -707,8 +561,6 @@
       svg.appendChild(bg);
 
       const maxY = Math.max(10, ...series);
-
-      // Expand y-axis range deliberately for visual slope comparison
       const yMax = Math.max(maxY * 1.6, maxY + 50);
 
       const xScale = (i) => m.l + (i / (series.length - 1)) * innerW;
@@ -825,7 +677,7 @@
 
     function recalc() {
       const rate = getIncidence();
-      el("incText").textContent = rate;
+      if (el("incText")) el("incText").textContent = String(rate);
 
       const base = (rate / 100000) * CATCHMENT_POPULATION;
 
@@ -835,84 +687,60 @@
 
       const { m, inc } = getMultiplier();
       const total = base * m;
-
       const perWeekRaw = total / 52;
 
       // DNA modifier (adds rebooking demand)
       const dnaPct = Math.max(0, Number(el("dnaRate")?.value || 0));
       const perWeek = Math.ceil(perWeekRaw * (1 + dnaPct / 100));
 
-      el("baseYear").textContent = fmtInt(base);
+      if (el("baseYear")) el("baseYear").textContent = fmtInt(base);
 
       // SUDEP panel
-      const recEl = el("rec1y");
-      if (recEl) recEl.textContent = String(Math.round(RECURRENCE_1Y * 100));
-      const srEl = el("sudepRate");
-      if (srEl) srEl.textContent = String(SUDEP_PER_1000_PY);
+      if (el("rec1y")) el("rec1y").textContent = String(Math.round(RECURRENCE_1Y * 100));
+      if (el("sudepRate")) el("sudepRate").textContent = String(SUDEP_PER_1000_PY);
 
-      const epiEl = el("epilepsyYear");
-      if (epiEl) epiEl.textContent = fmtInt(epilepsyYear);
+      if (el("epilepsyYear")) el("epilepsyYear").textContent = fmtInt(epilepsyYear);
+      if (el("sudepYear")) el("sudepYear").textContent = sudepYear < 0.05 ? "<0.1" : fmt1(sudepYear);
+      if (el("sudepPer")) el("sudepPer").textContent = SUDEP_PER_1000_PY === 1.0 ? "1 / 1,000" : `${SUDEP_PER_1000_PY} / 1,000`;
 
-      const sudEl = el("sudepYear");
-      if (sudEl) sudEl.textContent = sudepYear < 0.05 ? "<0.1" : fmt1(sudepYear);
-
-      const sudPerEl = el("sudepPer");
-      if (sudPerEl) {
-        sudPerEl.textContent = SUDEP_PER_1000_PY === 1.0 ? "1 / 1,000" : `${SUDEP_PER_1000_PY} / 1,000`;
-      }
-
-      el("mult").textContent = "× " + fmt1(m);
-      el("totalYear").textContent = fmtInt(total);
+      if (el("mult")) el("mult").textContent = "× " + fmt1(m);
+      if (el("totalYear")) el("totalYear").textContent = fmtInt(total);
 
       // overall chips show RAW weekly rate; sim uses perWeek (DNA-adjusted, rounded up)
-      el("perWeek").textContent = fmt1(perWeekRaw);
-      el("perMonth").textContent = fmt1(total / 12);
-      el("included").textContent = inc.length ? inc.join(" · ") : "None (base only)";
+      if (el("perWeek")) el("perWeek").textContent = fmt1(perWeekRaw);
+      if (el("perMonth")) el("perMonth").textContent = fmt1(total / 12);
+      if (el("included")) el("included").textContent = inc.length ? inc.join(" · ") : "None (base only)";
 
       // Weekly simulation panel
-      const simRefEl = el("simRefPerWeek");
-      if (simRefEl) simRefEl.textContent = String(perWeek);
+      if (el("simRefPerWeek")) el("simRefPerWeek").textContent = String(perWeek);
 
       const cap = Number(el("capacity")?.value || 0);
-      const capText = el("capText");
-      if (capText) capText.textContent = String(cap);
+      if (el("capText")) el("capText").textContent = String(cap);
 
       const b0 = Math.max(0, Number(el("baselineBacklog")?.value || 0));
 
       // Waiting time estimate (clear existing backlog under net clearance)
-      const waitEl = el("waitWeeks");
       const net = cap - perWeek;
-      let waitWeeks;
-      if (cap <= 0 || net <= 0) {
-        waitWeeks = Infinity;
-      } else {
-        waitWeeks = b0 / net;
-      }
-
-      if (waitEl) {
-        if (!isFinite(waitWeeks)) {
-          waitEl.textContent = "∞";
-        } else {
-          waitEl.textContent = waitWeeks > 156 ? ">156" : fmt1(waitWeeks);
-        }
+      const waitWeeks = (cap <= 0 || net <= 0) ? Infinity : (b0 / net);
+      if (el("waitWeeks")) {
+        el("waitWeeks").textContent = !isFinite(waitWeeks) ? "∞" : (waitWeeks > 156 ? ">156" : fmt1(waitWeeks));
       }
 
       // Intuitive wait for new referral entering today (patient-level snapshot)
-      const waitNewEl = el("waitNewReferral");
-      let waitNew;
-      if (cap <= 0) {
-        waitNew = Infinity;
-      } else {
-        waitNew = b0 / cap;
+      const waitNew = (cap <= 0) ? Infinity : (b0 / cap);
+      if (el("waitNewReferral")) {
+        el("waitNewReferral").textContent = !isFinite(waitNew) ? "∞" : (waitNew > 104 ? ">104" : fmt1(waitNew));
       }
 
-      if (waitNewEl) {
-        if (!isFinite(waitNew)) {
-          waitNewEl.textContent = "∞";
-        } else {
-          waitNewEl.textContent = waitNew > 104 ? ">104" : fmt1(waitNew);
-        }
-      }
+      // Other clinical resources (annual investigations; planning totals)
+      const invPct = getInvestigationRate();
+      const invMult = invPct / 100;
+
+      if (el("invRateText")) el("invRateText").textContent = String(Math.round(invPct));
+      if (el("invRateText2")) el("invRateText2").textContent = String(Math.round(invPct));
+
+      if (el("eegYear")) el("eegYear").textContent = fmtInt(total * EEG_PER_REFERRAL * invMult);
+      if (el("mriYear")) el("mriYear").textContent = fmtInt(total * MRI_PER_REFERRAL * invMult);
 
       // Build backlog series for 52 weeks (include week 0)
       const weeks = 52;
@@ -926,14 +754,17 @@
       drawBacklogChart(series);
     }
 
-    el("pop").textContent = fmtInt(CATCHMENT_POPULATION);
+    // ----- Wire up -----
+    if (el("pop")) el("pop").textContent = fmtInt(CATCHMENT_POPULATION);
 
     ["incidence","syncope","functional","panic","tias"].forEach(id => {
-      el(id).addEventListener("input", recalc);
-      el(id).addEventListener("change", recalc);
+      const node = el(id);
+      if (!node) return;
+      node.addEventListener("input", recalc);
+      node.addEventListener("change", recalc);
     });
 
-    ["baselineBacklog","capacity","dnaRate"].forEach(id => {
+    ["baselineBacklog","capacity","dnaRate","investigationRate"].forEach(id => {
       const node = el(id);
       if (!node) return;
       node.addEventListener("input", recalc);
@@ -1025,20 +856,45 @@
     async function loadOxfordshire() {
       const statusEl = el("mapStatus");
       try {
-        statusEl.textContent = "Loading Oxfordshire boundary…";
+        if (statusEl) statusEl.textContent = "Loading Oxfordshire boundary…";
         const res = await fetch(OXFORDSHIRE_GEOJSON_URL, { cache: "force-cache" });
         if (!res.ok) throw new Error("Fetch failed (" + res.status + ")");
         const gj = await res.json();
         const geom = extractGeometry(gj);
         const path = buildSvgPath(geom, 780, 420);
         if (!path) throw new Error("Could not parse Oxfordshire geometry");
-        el("oxfordshirePath").setAttribute("d", path);
-        statusEl.textContent = "Oxfordshire outline loaded from GeoJSON.";
+        const p = el("oxfordshirePath");
+        if (p) p.setAttribute("d", path);
+        if (statusEl) statusEl.textContent = "Oxfordshire outline loaded from GeoJSON.";
       } catch (e) {
-        statusEl.textContent = "Couldn’t load Oxfordshire GeoJSON (showing fallback): " + (e?.message || e);
+        if (statusEl) statusEl.textContent = "Couldn’t load Oxfordshire GeoJSON (showing fallback): " + (e?.message || e);
       }
     }
     loadOxfordshire();
+
+    // ----- Minimal self-tests (console) -----
+    // Note: these are non-blocking and only log failures.
+    (function runSelfTests(){
+      const assert = (cond, msg) => { if (!cond) console.error("Self-test failed:", msg); };
+
+      // getInvestigationRate clamps 0..100
+      const inv = el("investigationRate");
+      if (inv) {
+        inv.value = "150"; assert(getInvestigationRate() === 100, "Investigation rate should clamp to 100");
+        inv.value = "-10"; assert(getInvestigationRate() === 0, "Investigation rate should clamp to 0");
+        inv.value = "55"; assert(getInvestigationRate() === 55, "Investigation rate should read numeric value");
+        inv.value = "100";
+      }
+
+      // Multiplier should be >= 1
+      const { m } = getMultiplier();
+      assert(m >= 1, "Multiplier should be at least 1");
+
+      // SVG path builder should return a string for a simple polygon
+      const testGeom = { type: "Polygon", coordinates: [[[0,0],[1,0],[1,1],[0,1],[0,0]]] };
+      const d = buildSvgPath(testGeom, 100, 100);
+      assert(typeof d === "string" && d.includes("M") && d.includes("Z"), "buildSvgPath should produce a path string");
+    })();
   </script>
 </body>
 </html>
