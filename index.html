@@ -472,24 +472,6 @@
       <!-- Right: figures -->
       <div style="display:flex;flex-direction:column;gap:16px;">
 
-        <!-- Backlog chart -->
-        <div class="card">
-          <div class="maphead">
-            <div>
-              <div class="maptitle">First-fit backlog over time</div>
-              <div class="mapsub">Outstanding first-fit appointments vs weeks (52-week simulation)</div>
-            </div>
-            <div class="badge">Updates live</div>
-          </div>
-          <div class="mapwrap" style="padding-top:0;">
-            <svg id="backlogChart" viewBox="0 0 780 420" aria-label="Backlog chart">
-              <rect x="0" y="0" width="780" height="420" fill="rgba(0,0,0,.10)"></rect>
-              <!-- axes + line are drawn by JS -->
-            </svg>
-          </div>
-          <div class="mapfoot" id="chartStatus">Set baseline backlog and weekly capacity to see the projection.</div>
-        </div>
-
         <!-- Map -->
         <div class="card">
           <div class="maphead">
@@ -549,8 +531,30 @@
           </div>
 
           <div class="mapfoot" id="mapStatus">Loading Oxfordshire boundary…</div>
+        
+          
         </div>
 
+        <!-- Backlog chart -->
+        <div class="card">
+          <div class="maphead">
+            <div>
+              <div class="maptitle">First-fit backlog over time</div>
+              <div class="mapsub">Outstanding first-fit appointments vs weeks (52-week simulation)</div>
+            </div>
+            <div class="badge">Updates live</div>
+          </div>
+          <div class="mapwrap" style="padding-top:0;">
+            <svg id="backlogChart" viewBox="0 0 780 420" aria-label="Backlog chart">
+              <rect x="0" y="0" width="780" height="420" fill="rgba(0,0,0,.10)"></rect>
+              <!-- axes + line are drawn by JS -->
+            </svg>
+          </div>
+          <div class="mapfoot" id="chartStatus">Set baseline backlog and weekly capacity to see the projection.</div>
+        </div>
+
+
+        
       </div>
     </div>
 
