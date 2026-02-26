@@ -3,19 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Oxford University Hospitals – First Seizure Referral Simulation </title>
+  <title>Oxford University Hospitals – First Seizure Referral Simulation</title>
   <style>
     :root{
-      --bg: #0b1220;           /* dark blue */
+      --bg: #0b1220;
       --panel: rgba(255,255,255,.06);
       --panel2: rgba(255,255,255,.04);
       --border: rgba(255,255,255,.12);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.62);
       --muted2: rgba(255,255,255,.45);
-      --glow: rgba(255,255,255,.75);
-      --fill: rgba(255,255,255,.18);
-      --fill2: rgba(255,255,255,.07);
     }
     *{ box-sizing:border-box; }
     body{
@@ -66,6 +63,7 @@
       display:grid;
       grid-template-columns: 1.4fr .9fr;
       gap: 16px;
+      align-items:start;
     }
     @media (max-width: 720px){
       .grid{ grid-template-columns: 1fr; }
@@ -429,15 +427,21 @@
               <div class="kpi" style="grid-column: 1 / -1;">
                 <div class="label">Time to clear current backlog (weeks)</div>
                 <div class="value" id="waitWeeks">—</div>
-                $1Capped at 156 weeks (3 years).</div>
+                <div class="note">This is the time to clear the existing backlog assuming capacity &gt; demand. Capped at 156 weeks (3 years).</div>
               </div>
             </div>
 
-            $1
+            <div class="kpis" style="margin-top:12px;">
+              <div class="kpi" style="grid-column: 1 / -1;">
+                <div class="label">Estimated wait for a referral added today (weeks)</div>
+                <div class="value" id="waitNewReferral">—</div>
+                <div class="note">Approximate wait based on current backlog ÷ appointments per week (intuitive patient-level estimate).</div>
+              </div>
+            </div>
 
             <div class="toggles" style="margin-top:14px;">
               <div class="section-title">Risk of SUDEP (national averages)</div>
-              <div class="hint">Estimated from the annual number of first unprovoked seizures and typical 1‑year recurrence risk.</div>
+              <div class="hint">Estimated from the annual number of first unprovoked seizures and typical 1-year recurrence risk.</div>
 
               <div class="kpis" style="margin-top:12px;">
                 <div class="kpi">
@@ -458,10 +462,8 @@
               </div>
 
               <div class="hint" style="margin-top:10px;">
-                Planning estimate only. Individual risk varies widely (e.g., uncontrolled tonic‑clonic seizures greatly increase risk).
+                Planning estimate only. Individual risk varies widely (e.g., uncontrolled tonic-clonic seizures greatly increase risk).
               </div>
-            </div>
-            </div>
             </div>
           </div>
         </div>
@@ -469,6 +471,24 @@
 
       <!-- Right: figures -->
       <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <!-- Backlog chart -->
+        <div class="card">
+          <div class="maphead">
+            <div>
+              <div class="maptitle">First-fit backlog over time</div>
+              <div class="mapsub">Outstanding first-fit appointments vs weeks (52-week simulation)</div>
+            </div>
+            <div class="badge">Updates live</div>
+          </div>
+          <div class="mapwrap" style="padding-top:0;">
+            <svg id="backlogChart" viewBox="0 0 780 420" aria-label="Backlog chart">
+              <rect x="0" y="0" width="780" height="420" fill="rgba(0,0,0,.10)"></rect>
+              <!-- axes + line are drawn by JS -->
+            </svg>
+          </div>
+          <div class="mapfoot" id="chartStatus">Set baseline backlog and weekly capacity to see the projection.</div>
+        </div>
 
         <!-- Map -->
         <div class="card">
@@ -531,24 +551,6 @@
           <div class="mapfoot" id="mapStatus">Loading Oxfordshire boundary…</div>
         </div>
 
-        <!-- Backlog chart -->
-        <div class="card">
-          <div class="maphead">
-            <div>
-              <div class="maptitle">First-fit backlog over time</div>
-              <div class="mapsub">Outstanding first-fit appointments vs weeks (52-week simulation)</div>
-            </div>
-            <div class="badge">Updates live</div>
-          </div>
-          <div class="mapwrap" style="padding-top:0;">
-            <svg id="backlogChart" viewBox="0 0 780 420" aria-label="Backlog chart">
-              <rect x="0" y="0" width="780" height="420" fill="rgba(0,0,0,.10)"></rect>
-              <!-- axes + line are drawn by JS -->
-            </svg>
-          </div>
-          <div class="mapfoot" id="chartStatus">Set baseline backlog and weekly capacity to see the projection.</div>
-        </div>
-
       </div>
     </div>
 
@@ -556,98 +558,99 @@
       Demo tool. Oxfordshire boundary source: <code>glynnbird/ukcountiesgeojson</code> (raw GeoJSON fetch). Uplifts are illustrative—replace with local audit data for operational planning.
 
       <div style="margin-top:24px;border:1px solid var(--border);background:rgba(0,0,0,.18);border-radius:16px;padding:16px;">
-      <div style="font-size:13px;font-weight:650;margin-bottom:10px;">
-        Evidence & References
+        <div style="font-size:13px;font-weight:650;margin-bottom:10px;">
+          Evidence & References
+        </div>
+
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">
+          Incidence of first unprovoked seizure (commonly cited ~50–70 per 100,000/year):
+        </div>
+
+        <ol style="font-size:12px;color:rgba(255,255,255,.75);padding-left:18px;line-height:1.4;">
+          <li>
+            Neligan A. The epidemiology of epilepsy. <em>Epilepsy Society</em>. 2015.
+            Reports first unprovoked seizure incidence typically 50–70 per 100,000/year in industrialised countries.
+            <br>
+            <a href="https://epilepsysociety.org.uk/sites/default/files/2020-08/Chapter01Neligan-2015_0.pdf" target="_blank" style="color:#7dd3fc;">
+              https://epilepsysociety.org.uk/sites/default/files/2020-08/Chapter01Neligan-2015_0.pdf
+            </a>
+          </li>
+
+          <li>
+            Rizvi S, Ladino LD, Hernandez-Ronquillo L, Téllez-Zenteno JF.
+            Incidence and prevalence of epilepsy and unprovoked seizures.
+            <em>Seizure</em>. 2017;49:13-18.
+            <br>
+            <a href="https://www.seizure-journal.com/article/S1059-1311(17)30118-8/fulltext" target="_blank" style="color:#7dd3fc;">
+              https://www.seizure-journal.com/article/S1059-1311(17)30118-8/fulltext
+            </a>
+          </li>
+        </ol>
+
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;margin-bottom:6px;">
+          Seizure mimics in first seizure clinics (informing uplift factors):
+        </div>
+
+        <ol start="3" style="font-size:12px;color:rgba(255,255,255,.75);padding-left:18px;line-height:1.4;">
+          <li>
+            UK first seizure clinic audits report approximately 30–50% of referrals are ultimately diagnosed as seizure mimics.
+            Example:
+            <br>
+            <a href="https://www.seizure-journal.com/article/S1059-1311(23)00225-X/fulltext" target="_blank" style="color:#7dd3fc;">
+              Seizure Journal (2023 audit)
+            </a>
+          </li>
+
+          <li>
+            St George’s Hospital first seizure clinic audit: 41.7% mimics overall;
+            syncope ~22%, functional/dissociative attacks ~6%, TIA ~1–2%.
+            <br>
+            <a href="https://reference-global.com/download/article/10.21307/joepi-2017-0004.pdf" target="_blank" style="color:#7dd3fc;">
+              https://reference-global.com/download/article/10.21307/joepi-2017-0004.pdf
+            </a>
+          </li>
+
+          <li>
+            NIHR Evidence alert summarising recurrence after a first unprovoked seizure (meta-analysis): 36% have a second seizure within 1 year.
+            <br>
+            <a href="https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/" target="_blank" style="color:#7dd3fc;">
+              https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/
+            </a>
+          </li>
+
+          <li>
+            American Academy of Neurology / American Epilepsy Society practice guideline: SUDEP incidence in adults ~1.2 per 1,000 patient-years (systematic review).
+            <br>
+            <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/" target="_blank" style="color:#7dd3fc;">
+              https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/
+            </a>
+          </li>
+
+          <li>
+            NICE evidence review notes overall SUDEP rate around 1 in 1,000 people with epilepsy per year.
+            <br>
+            <a href="https://www.ncbi.nlm.nih.gov/books/NBK591158/" target="_blank" style="color:#7dd3fc;">
+              https://www.ncbi.nlm.nih.gov/books/NBK591158/
+            </a>
+          </li>
+        </ol>
+
+        <div style="font-size:11px;color:var(--muted2);margin-top:10px;">
+          Uplift percentages and SUDEP calculations are illustrative planning defaults and should be calibrated using local service data.
+        </div>
       </div>
-
-      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">
-        Incidence of first unprovoked seizure (commonly cited ~50–70 per 100,000/year):
-      </div>
-
-      <ol style="font-size:12px;color:rgba(255,255,255,.75);padding-left:18px;line-height:1.4;">
-        <li>
-          Neligan A. The epidemiology of epilepsy. <em>Epilepsy Society</em>. 2015.
-          Reports first unprovoked seizure incidence typically 50–70 per 100,000/year in industrialised countries.
-          <br>
-          <a href="https://epilepsysociety.org.uk/sites/default/files/2020-08/Chapter01Neligan-2015_0.pdf" target="_blank" style="color:#7dd3fc;">
-            https://epilepsysociety.org.uk/sites/default/files/2020-08/Chapter01Neligan-2015_0.pdf
-          </a>
-        </li>
-
-        <li>
-          Rizvi S, Ladino LD, Hernandez-Ronquillo L, Téllez-Zenteno JF.
-          Incidence and prevalence of epilepsy and unprovoked seizures.
-          <em>Seizure</em>. 2017;49:13-18.
-          <br>
-          <a href="https://www.seizure-journal.com/article/S1059-1311(17)30118-8/fulltext" target="_blank" style="color:#7dd3fc;">
-            https://www.seizure-journal.com/article/S1059-1311(17)30118-8/fulltext
-          </a>
-        </li>
-      </ol>
-
-      <div style="font-size:12px;color:var(--muted);margin-top:10px;margin-bottom:6px;">
-        Seizure mimics in first seizure clinics (informing uplift factors):
-      </div>
-
-      <ol start="3" style="font-size:12px;color:rgba(255,255,255,.75);padding-left:18px;line-height:1.4;">
-        <li>
-          UK first seizure clinic audits report approximately 30–50% of referrals are ultimately diagnosed as seizure mimics.
-          Example:
-          <br>
-          <a href="https://www.seizure-journal.com/article/S1059-1311(23)00225-X/fulltext" target="_blank" style="color:#7dd3fc;">
-            Seizure Journal (2023 audit)
-          </a>
-        </li>
-
-        <li>
-          St George’s Hospital first seizure clinic audit: 41.7% mimics overall;
-          syncope ~22%, functional/dissociative attacks ~6%, TIA ~1–2%.
-          <br>
-          <a href="https://reference-global.com/download/article/10.21307/joepi-2017-0004.pdf" target="_blank" style="color:#7dd3fc;">
-            https://reference-global.com/download/article/10.21307/joepi-2017-0004.pdf
-          </a>
-        </li>
-
-        <li>
-          NIHR Evidence alert summarising recurrence after a first unprovoked seizure (meta-analysis): 36% have a second seizure within 1 year.
-          <br>
-          <a href="https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/" target="_blank" style="color:#7dd3fc;">
-            https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/
-          </a>
-        </li>
-
-        <li>
-          American Academy of Neurology / American Epilepsy Society practice guideline: SUDEP incidence in adults ~1.2 per 1,000 patient-years (systematic review).
-          <br>
-          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/" target="_blank" style="color:#7dd3fc;">
-            https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/
-          </a>
-        </li>
-
-        <li>
-          NICE evidence review notes overall SUDEP rate around 1 in 1,000 people with epilepsy per year.
-          <br>
-          <a href="https://www.ncbi.nlm.nih.gov/books/NBK591158/" target="_blank" style="color:#7dd3fc;">
-            https://www.ncbi.nlm.nih.gov/books/NBK591158/
-          </a>
-        </li>
-      </ol>
-
-      <div style="font-size:11px;color:var(--muted2);margin-top:10px;">
-        Uplift percentages in this tool are illustrative planning defaults derived from published audit proportions and should be calibrated using local service data.
-      </div>
-    </div>
     </footer>
   </div>
 
   <script>
     // ----- Parameters -----
+    const CATCHMENT_POPULATION = 805000;
+
     // 1-year risk of a second seizure after a first unprovoked seizure (NIHR Evidence alert)
     const RECURRENCE_1Y = 0.36;
 
     // SUDEP incidence (general epilepsy population): ~1 per 1,000 person-years
     const SUDEP_PER_1000_PY = 1.0;
-    const CATCHMENT_POPULATION = 805000;
 
     const uplifts = [
       { key: "syncope", label: "Syncope", uplift: 0.25 },
@@ -680,133 +683,12 @@
       return { m, inc };
     }
 
-    function recalc() {
-      const rate = getIncidence();
-      el("incText").textContent = rate;
-
-      const base = (rate / 100000) * CATCHMENT_POPULATION;
-
-      // Epilepsy incidence proxy: proportion with a second unprovoked seizure within 1 year
-      const epilepsyYear = base * RECURRENCE_1Y;
-      const sudepYear = epilepsyYear * (SUDEP_PER_1000_PY / 1000);
-      const { m, inc } = getMultiplier();
-      const total = base * m;
-
-      const perWeekRaw = total / 52;
-
-      // DNA modifier (adds rebooking demand)
-      const dnaPct = Math.max(0, Number(el("dnaRate")?.value || 0));
-      const perWeek = Math.ceil(perWeekRaw * (1 + dnaPct / 100));
-
-      el("baseYear").textContent = fmtInt(base);
-
-      // SUDEP panel
-      const recEl = el("rec1y");
-      if (recEl) recEl.textContent = String(Math.round(RECURRENCE_1Y * 100));
-      const srEl = el("sudepRate");
-      if (srEl) srEl.textContent = String(SUDEP_PER_1000_PY);
-
-      const epiEl = el("epilepsyYear");
-      if (epiEl) epiEl.textContent = fmtInt(epilepsyYear);
-
-      const sudEl = el("sudepYear");
-      if (sudEl) sudEl.textContent = sudepYear < 0.05 ? "<0.1" : fmt1(sudepYear);
-
-      const sudPerEl = el("sudepPer");
-      if (sudPerEl) {
-        sudPerEl.textContent = SUDEP_PER_1000_PY === 1.0 ? "1 / 1,000" : `${SUDEP_PER_1000_PY} / 1,000`;
-      }
-      el("mult").textContent = "× " + fmt1(m);
-      el("totalYear").textContent = fmtInt(total);
-      el("perWeek").textContent = fmt1(perWeekRaw);
-      el("perMonth").textContent = fmt1(total / 12);
-      el("included").textContent = inc.length ? inc.join(" · ") : "None (base only)";
-
-      // Weekly simulation panel
-      const simRefEl = el("simRefPerWeek");
-      if (simRefEl) simRefEl.textContent = String(perWeek);
-
-      const cap = Number(el("capacity")?.value || 0);
-      const capText = el("capText");
-      if (capText) capText.textContent = String(cap);
-
-      const b0 = Math.max(0, Number(el("baselineBacklog")?.value || 0));
-
-      // Waiting time estimate (fluid approximation)
-      // If capacity <= demand, backlog does not clear (diverges)
-      const waitEl = el("waitWeeks");
-      const net = cap - perWeek;
-      let waitWeeks;
-      if (cap <= 0) {
-        waitWeeks = Infinity;
-      } else if (net <= 0) {
-        waitWeeks = Infinity;
-      } else {
-        // time to clear current backlog under net clearance rate
-        waitWeeks = b0 / net;
-      }
-
-      if (waitEl) {
-        if (!isFinite(waitWeeks)) {
-          waitEl.textContent = "∞";
-        } else {
-          waitEl.textContent = waitWeeks > 156 ? ">156" : fmt1(waitWeeks);
-        }
-      }
-
-      // --- Intuitive wait for new referral entering today ---
-      const waitNewEl = el("waitNewReferral");
-      let waitNew;
-      if (cap <= 0) {
-        waitNew = Infinity;
-      } else {
-        waitNew = b0 / cap;
-      }
-
-      if (waitNewEl) {
-        if (!isFinite(waitNew)) {
-          waitNewEl.textContent = "∞";
-        } else {
-          waitNewEl.textContent = waitNew > 104 ? ">104" : fmt1(waitNew);
-        }
-      }
-
-      // Build backlog series for 52 weeks (include week 0)
-      const weeks = 52;
-      const series = new Array(weeks + 1);
-      series[0] = b0;
-      for (let w = 0; w < weeks; w++) {
-        const next = series[w] + perWeek - cap;
-        series[w + 1] = Math.max(0, next);
-      }
-
-      drawBacklogChart(series);
-    }
-
-    el("pop").textContent = fmtInt(CATCHMENT_POPULATION);
-
-    ["incidence","syncope","functional","panic","tias"].forEach(id => {
-      el(id).addEventListener("input", recalc);
-      el(id).addEventListener("change", recalc);
-    });
-
-    // Weekly simulation controls
-    ["baselineBacklog","capacity","dnaRate"].forEach(id => {
-      const node = el(id);
-      if (!node) return;
-      node.addEventListener("input", recalc);
-      node.addEventListener("change", recalc);
-    });
-
-    recalc();
-
     // ----- Backlog chart (SVG) -----
     function drawBacklogChart(series) {
       const svg = el("backlogChart");
       const status = el("chartStatus");
       if (!svg || !Array.isArray(series) || series.length < 2) return;
 
-      // Clear
       while (svg.lastChild) svg.removeChild(svg.lastChild);
 
       const W = 780, H = 420;
@@ -814,7 +696,6 @@
       const innerW = W - m.l - m.r;
       const innerH = H - m.t - m.b;
 
-      // Background
       const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
       bg.setAttribute("x", "0"); bg.setAttribute("y", "0");
       bg.setAttribute("width", String(W)); bg.setAttribute("height", String(H));
@@ -824,13 +705,11 @@
       const maxY = Math.max(10, ...series);
 
       // Expand y-axis range deliberately for visual slope comparison
-      // This prevents auto-tight scaling and makes slope changes clearer
       const yMax = Math.max(maxY * 1.6, maxY + 50);
 
       const xScale = (i) => m.l + (i / (series.length - 1)) * innerW;
       const yScale = (v) => m.t + (1 - (v / yMax)) * innerH;
 
-      // Grid + axes
       const axisColor = "rgba(255,255,255,.22)";
       const gridColor = "rgba(255,255,255,.10)";
       const textColor = "rgba(255,255,255,.72)";
@@ -856,8 +735,8 @@
         addLine(String(m.l), String(y), String(W - m.r), String(y), gridColor, 1, "4 6");
 
         const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        tx.setAttribute("x", String(m.l - 10));
-        tx.setAttribute("y", String(y + 4));
+        tx.setAttribute("x", String(m.l - 12));
+        tx.setAttribute("y", String(y + 6));
         tx.setAttribute("text-anchor", "end");
         tx.setAttribute("font-size", String(tickFont));
         tx.setAttribute("fill", textColor);
@@ -874,7 +753,7 @@
 
         const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
         tx.setAttribute("x", String(x));
-        tx.setAttribute("y", String(H - m.b + 28));
+        tx.setAttribute("y", String(H - m.b + 42));
         tx.setAttribute("text-anchor", "middle");
         tx.setAttribute("font-size", String(tickFont));
         tx.setAttribute("fill", textColor);
@@ -888,9 +767,9 @@
 
       // Axis labels
       const ylab = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      ylab.setAttribute("x", String(16));
+      ylab.setAttribute("x", String(24));
       ylab.setAttribute("y", String(m.t + innerH / 2));
-      ylab.setAttribute("transform", `rotate(-90 16 ${m.t + innerH / 2})`);
+      ylab.setAttribute("transform", `rotate(-90 24 ${m.t + innerH / 2})`);
       ylab.setAttribute("font-size", String(axisFont));
       ylab.setAttribute("fill", textColor);
       ylab.textContent = "Outstanding first-fit appointments";
@@ -898,7 +777,7 @@
 
       const xlab = document.createElementNS("http://www.w3.org/2000/svg", "text");
       xlab.setAttribute("x", String(m.l + innerW / 2));
-      xlab.setAttribute("y", String(H - 12));
+      xlab.setAttribute("y", String(H - 18));
       xlab.setAttribute("text-anchor", "middle");
       xlab.setAttribute("font-size", String(axisFont));
       xlab.setAttribute("fill", textColor);
@@ -939,6 +818,125 @@
         status.textContent = `Backlog ${dir} to ${fmtInt(end)} by week 52.`;
       }
     }
+
+    function recalc() {
+      const rate = getIncidence();
+      el("incText").textContent = rate;
+
+      const base = (rate / 100000) * CATCHMENT_POPULATION;
+
+      // Epilepsy incidence proxy: proportion with a second unprovoked seizure within 1 year
+      const epilepsyYear = base * RECURRENCE_1Y;
+      const sudepYear = epilepsyYear * (SUDEP_PER_1000_PY / 1000);
+
+      const { m, inc } = getMultiplier();
+      const total = base * m;
+
+      const perWeekRaw = total / 52;
+
+      // DNA modifier (adds rebooking demand)
+      const dnaPct = Math.max(0, Number(el("dnaRate")?.value || 0));
+      const perWeek = Math.ceil(perWeekRaw * (1 + dnaPct / 100));
+
+      el("baseYear").textContent = fmtInt(base);
+
+      // SUDEP panel
+      const recEl = el("rec1y");
+      if (recEl) recEl.textContent = String(Math.round(RECURRENCE_1Y * 100));
+      const srEl = el("sudepRate");
+      if (srEl) srEl.textContent = String(SUDEP_PER_1000_PY);
+
+      const epiEl = el("epilepsyYear");
+      if (epiEl) epiEl.textContent = fmtInt(epilepsyYear);
+
+      const sudEl = el("sudepYear");
+      if (sudEl) sudEl.textContent = sudepYear < 0.05 ? "<0.1" : fmt1(sudepYear);
+
+      const sudPerEl = el("sudepPer");
+      if (sudPerEl) {
+        sudPerEl.textContent = SUDEP_PER_1000_PY === 1.0 ? "1 / 1,000" : `${SUDEP_PER_1000_PY} / 1,000`;
+      }
+
+      el("mult").textContent = "× " + fmt1(m);
+      el("totalYear").textContent = fmtInt(total);
+
+      // overall chips show RAW weekly rate; sim uses perWeek (DNA-adjusted, rounded up)
+      el("perWeek").textContent = fmt1(perWeekRaw);
+      el("perMonth").textContent = fmt1(total / 12);
+      el("included").textContent = inc.length ? inc.join(" · ") : "None (base only)";
+
+      // Weekly simulation panel
+      const simRefEl = el("simRefPerWeek");
+      if (simRefEl) simRefEl.textContent = String(perWeek);
+
+      const cap = Number(el("capacity")?.value || 0);
+      const capText = el("capText");
+      if (capText) capText.textContent = String(cap);
+
+      const b0 = Math.max(0, Number(el("baselineBacklog")?.value || 0));
+
+      // Waiting time estimate (clear existing backlog under net clearance)
+      const waitEl = el("waitWeeks");
+      const net = cap - perWeek;
+      let waitWeeks;
+      if (cap <= 0 || net <= 0) {
+        waitWeeks = Infinity;
+      } else {
+        waitWeeks = b0 / net;
+      }
+
+      if (waitEl) {
+        if (!isFinite(waitWeeks)) {
+          waitEl.textContent = "∞";
+        } else {
+          waitEl.textContent = waitWeeks > 156 ? ">156" : fmt1(waitWeeks);
+        }
+      }
+
+      // Intuitive wait for new referral entering today (patient-level snapshot)
+      const waitNewEl = el("waitNewReferral");
+      let waitNew;
+      if (cap <= 0) {
+        waitNew = Infinity;
+      } else {
+        waitNew = b0 / cap;
+      }
+
+      if (waitNewEl) {
+        if (!isFinite(waitNew)) {
+          waitNewEl.textContent = "∞";
+        } else {
+          waitNewEl.textContent = waitNew > 104 ? ">104" : fmt1(waitNew);
+        }
+      }
+
+      // Build backlog series for 52 weeks (include week 0)
+      const weeks = 52;
+      const series = new Array(weeks + 1);
+      series[0] = b0;
+      for (let w = 0; w < weeks; w++) {
+        const next = series[w] + perWeek - cap;
+        series[w + 1] = Math.max(0, next);
+      }
+
+      drawBacklogChart(series);
+    }
+
+    el("pop").textContent = fmtInt(CATCHMENT_POPULATION);
+
+    ["incidence","syncope","functional","panic","tias"].forEach(id => {
+      el(id).addEventListener("input", recalc);
+      el(id).addEventListener("change", recalc);
+    });
+
+    ["baselineBacklog","capacity","dnaRate"].forEach(id => {
+      const node = el(id);
+      if (!node) return;
+      node.addEventListener("input", recalc);
+      node.addEventListener("change", recalc);
+    });
+
+    recalc();
 
     // ----- Map rendering (Oxfordshire GeoJSON -> SVG path) -----
     function extractGeometry(gj) {
