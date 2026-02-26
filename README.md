@@ -1,4 +1,4 @@
-# Oxford University Hospitals – First Seizure Referral Estimator
+# Oxford University Hospitals – First Seizure Referral simulatiion
 
 This repo contains a single-file interactive webpage (`index.html`) for **service-planning estimates** of first seizure clinic referrals for Oxford University Hospitals.
 
