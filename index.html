@@ -67,7 +67,7 @@
       grid-template-columns: 1.4fr .9fr;
       gap: 16px;
     }
-    @media (max-width: 900px){
+    @media (max-width: 720px){
       .grid{ grid-template-columns: 1fr; }
     }
     .card{
@@ -365,68 +365,190 @@
               You can tune these uplift percentages in the code to match a local audit.
             </div>
           </div>
+
+          <!-- Weekly clinic simulation -->
+          <div class="toggles" style="margin-top:14px;">
+            <div class="section-title">Weekly clinic simulation</div>
+            <div class="hint">Simulate how the outstanding first-fit appointments (backlog) changes week-by-week given the current referral estimate and your weekly capacity.</div>
+
+            <div class="kpis" style="margin-top:12px;">
+              <div class="kpi" style="grid-column: 1 / -1;">
+                <div class="label">Estimated new referrals / week (from current settings)</div>
+                <div class="value" id="simRefPerWeek">—</div>
+                <div class="note">This updates automatically when incidence or mimics change.</div>
+              </div>
+            </div>
+
+            <div class="toggle" style="margin-top:12px;">
+              <div>
+                <div class="tlabel">DNA (did not attend) rate</div>
+                <div class="tblurb">Adds extra rebooking demand on top of new referrals.</div>
+              </div>
+              <div class="switchline" style="align-items:center;">
+                <input id="dnaRate" type="number" min="0" max="100" step="0.1" value="0"
+                       style="width:110px; padding:8px 10px; border-radius:12px; border:1px solid rgba(255,255,255,.16); background: rgba(0,0,0,.18); color: rgba(255,255,255,.9);" />
+                <div class="uplift">%</div>
+              </div>
+            </div>
+
+            <div class="hint" style="margin-top:8px;">
+              Effective weekly demand = <code>ceil(referrals/week × (1 + DNA%))</code>.
+            </div>
+
+            <div class="toggle" style="margin-top:12px;">
+              <div>
+                <div class="tlabel">Baseline outstanding first-fit appointments</div>
+                <div class="tblurb">Starting backlog at week 0 (e.g., current waiting list size).</div>
+              </div>
+              <div class="switchline" style="align-items:center;">
+                <input id="baselineBacklog" type="number" min="0" step="1" value="0"
+                       style="width:140px; padding:8px 10px; border-radius:12px; border:1px solid rgba(255,255,255,.16); background: rgba(0,0,0,.18); color: rgba(255,255,255,.9);" />
+              </div>
+            </div>
+
+            <div class="sliderbox" style="margin-top:12px;">
+              <div class="row" style="margin-bottom:8px;">
+                <div>
+                  <div class="section-title" style="font-size:12px;">Appointments performed / week</div>
+                  <div class="hint" style="margin-top:2px;">Adjust weekly clinic capacity (0–30).</div>
+                </div>
+                <div class="badge"><span id="capText">0</span> / week</div>
+              </div>
+              <input id="capacity" type="range" min="0" max="30" step="1" value="0" />
+              <div class="sliderlabels">
+                <span>0</span>
+                <span>30</span>
+              </div>
+            </div>
+
+            <div class="hint" style="margin-top:10px;">
+              Chart (right) shows backlog over 52 weeks: <code>backlog(t+1) = max(0, backlog(t) + demand/week − capacity/week)</code>.
+            </div>
+
+            <div class="kpis" style="margin-top:12px;">
+              <div class="kpi" style="grid-column: 1 / -1;">
+                <div class="label">Time to clear current backlog (weeks)</div>
+                <div class="value" id="waitWeeks">—</div>
+                $1Capped at 156 weeks (3 years).</div>
+              </div>
+            </div>
+
+            $1
+
+            <div class="toggles" style="margin-top:14px;">
+              <div class="section-title">Risk of SUDEP (national averages)</div>
+              <div class="hint">Estimated from the annual number of first unprovoked seizures and typical 1‑year recurrence risk.</div>
+
+              <div class="kpis" style="margin-top:12px;">
+                <div class="kpi">
+                  <div class="label">Estimated new epilepsy cases / year</div>
+                  <div class="value" id="epilepsyYear">—</div>
+                  <div class="note">Assumes <span id="rec1y">36%</span> have a second unprovoked seizure within 1 year.</div>
+                </div>
+                <div class="kpi">
+                  <div class="label">Estimated SUDEP / year</div>
+                  <div class="value" id="sudepYear">—</div>
+                  <div class="note">Uses ~<span id="sudepRate">1</span> per 1,000 people with epilepsy per year.</div>
+                </div>
+                <div class="kpi">
+                  <div class="label">Equivalent risk</div>
+                  <div class="value" id="sudepPer">—</div>
+                  <div class="note">per year (population-average)</div>
+                </div>
+              </div>
+
+              <div class="hint" style="margin-top:10px;">
+                Planning estimate only. Individual risk varies widely (e.g., uncontrolled tonic‑clonic seizures greatly increase risk).
+              </div>
+            </div>
+            </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Right: map -->
-      <div class="card">
-        <div class="maphead">
-          <div>
-            <div class="maptitle">BOB region context</div>
-            <div class="mapsub">Buckinghamshire · Oxfordshire · Berkshire West (Oxfordshire boundary from GeoJSON)</div>
+      <!-- Right: figures -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <!-- Backlog chart -->
+        <div class="card">
+          <div class="maphead">
+            <div>
+              <div class="maptitle">First-fit backlog over time</div>
+              <div class="mapsub">Outstanding first-fit appointments vs weeks (52-week simulation)</div>
+            </div>
+            <div class="badge">Updates live</div>
           </div>
-          <div class="badge">Oxfordshire catchment highlighted</div>
+          <div class="mapwrap" style="padding-top:0;">
+            <svg id="backlogChart" viewBox="0 0 780 420" aria-label="Backlog chart">
+              <rect x="0" y="0" width="780" height="420" fill="rgba(0,0,0,.10)"></rect>
+              <!-- axes + line are drawn by JS -->
+            </svg>
+          </div>
+          <div class="mapfoot" id="chartStatus">Set baseline backlog and weekly capacity to see the projection.</div>
         </div>
 
-        <div class="mapwrap">
-          <svg viewBox="0 0 780 420" aria-label="Map of BOB region with Oxfordshire highlighted">
-            <defs>
-              <linearGradient id="mbg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="rgba(255,255,255,0.06)"/>
-                <stop offset="100%" stop-color="rgba(255,255,255,0.02)"/>
-              </linearGradient>
-              <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="8" result="blur"/>
-                <feMerge>
-                  <feMergeNode in="blur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
+        <!-- Map -->
+        <div class="card">
+          <div class="maphead">
+            <div>
+              <div class="maptitle">BOB region context</div>
+              <div class="mapsub">Buckinghamshire · Oxfordshire · Berkshire West (Oxfordshire boundary from GeoJSON)</div>
+            </div>
+            <div class="badge">Oxfordshire catchment highlighted</div>
+          </div>
 
-            <rect x="0" y="0" width="780" height="420" fill="url(#mbg)"></rect>
+          <div class="mapwrap">
+            <svg viewBox="0 0 780 420" aria-label="Map of BOB region with Oxfordshire highlighted">
+              <defs>
+                <linearGradient id="mbg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="rgba(255,255,255,0.06)"/>
+                  <stop offset="100%" stop-color="rgba(255,255,255,0.02)"/>
+                </linearGradient>
+                <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="8" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
 
-            <!-- Berkshire West (schematic) -->
-            <path d="M95,305 L210,255 L300,290 L285,370 L140,392 Z"
-                  fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="2"></path>
+              <rect x="0" y="0" width="780" height="420" fill="url(#mbg)"></rect>
 
-            <!-- Buckinghamshire (schematic) -->
-            <path d="M430,108 L640,130 L705,220 L642,310 L470,308 L520,178 Z"
-                  fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="2"></path>
+              <!-- Berkshire West (schematic) -->
+              <path d="M95,305 L210,255 L300,290 L285,370 L140,392 Z"
+                    fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="2"></path>
 
-            <!-- Oxfordshire outline (accurate when loaded) -->
-            <path id="oxfordshirePath"
-                  d="M225,125 L430,108 L520,178 L470,308 L310,338 L210,255 Z"
-                  fill="rgba(255,255,255,0.20)" stroke="rgba(255,255,255,0.70)"
-                  stroke-width="2.2" filter="url(#softGlow)"></path>
+              <!-- Buckinghamshire (schematic) -->
+              <path d="M430,108 L640,130 L705,220 L642,310 L470,308 L520,178 Z"
+                    fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="2"></path>
 
-            <!-- Oxford marker -->
-            <circle cx="380" cy="225" r="7" fill="rgba(255,255,255,0.90)"></circle>
-            <circle cx="380" cy="225" r="18" fill="rgba(255,255,255,0.10)"></circle>
-            <text x="402" y="230" fill="rgba(255,255,255,0.88)" font-size="14"
-                  font-family="ui-sans-serif, system-ui">Oxford</text>
+              <!-- Oxfordshire outline (accurate when loaded) -->
+              <path id="oxfordshirePath"
+                    d="M225,125 L430,108 L520,178 L470,308 L310,338 L210,255 Z"
+                    fill="rgba(255,255,255,0.20)" stroke="rgba(255,255,255,0.70)"
+                    stroke-width="2.2" filter="url(#softGlow)"></path>
 
-            <!-- Labels -->
-            <text x="135" y="325" fill="rgba(255,255,255,0.70)" font-size="16"
-                  font-family="ui-sans-serif, system-ui">Berkshire West</text>
-            <text x="295" y="140" fill="rgba(255,255,255,0.80)" font-size="16"
-                  font-family="ui-sans-serif, system-ui">Oxfordshire</text>
-            <text x="520" y="155" fill="rgba(255,255,255,0.70)" font-size="16"
-                  font-family="ui-sans-serif, system-ui">Buckinghamshire</text>
-          </svg>
+              <!-- Oxford marker -->
+              <circle cx="380" cy="225" r="7" fill="rgba(255,255,255,0.90)"></circle>
+              <circle cx="380" cy="225" r="18" fill="rgba(255,255,255,0.10)"></circle>
+              <text x="402" y="230" fill="rgba(255,255,255,0.88)" font-size="14"
+                    font-family="ui-sans-serif, system-ui">Oxford</text>
+
+              <!-- Labels -->
+              <text x="135" y="325" fill="rgba(255,255,255,0.70)" font-size="16"
+                    font-family="ui-sans-serif, system-ui">Berkshire West</text>
+              <text x="295" y="140" fill="rgba(255,255,255,0.80)" font-size="16"
+                    font-family="ui-sans-serif, system-ui">Oxfordshire</text>
+              <text x="520" y="155" fill="rgba(255,255,255,0.70)" font-size="16"
+                    font-family="ui-sans-serif, system-ui">Buckinghamshire</text>
+            </svg>
+          </div>
+
+          <div class="mapfoot" id="mapStatus">Loading Oxfordshire boundary…</div>
         </div>
 
-        <div class="mapfoot" id="mapStatus">Loading Oxfordshire boundary…</div>
       </div>
     </div>
 
@@ -485,6 +607,30 @@
             https://reference-global.com/download/article/10.21307/joepi-2017-0004.pdf
           </a>
         </li>
+
+        <li>
+          NIHR Evidence alert summarising recurrence after a first unprovoked seizure (meta-analysis): 36% have a second seizure within 1 year.
+          <br>
+          <a href="https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/" target="_blank" style="color:#7dd3fc;">
+            https://evidence.nihr.ac.uk/alert/epilepsy-what-are-the-chances-of-having-a-second-seizure/
+          </a>
+        </li>
+
+        <li>
+          American Academy of Neurology / American Epilepsy Society practice guideline: SUDEP incidence in adults ~1.2 per 1,000 patient-years (systematic review).
+          <br>
+          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/" target="_blank" style="color:#7dd3fc;">
+            https://pmc.ncbi.nlm.nih.gov/articles/PMC5486432/
+          </a>
+        </li>
+
+        <li>
+          NICE evidence review notes overall SUDEP rate around 1 in 1,000 people with epilepsy per year.
+          <br>
+          <a href="https://www.ncbi.nlm.nih.gov/books/NBK591158/" target="_blank" style="color:#7dd3fc;">
+            https://www.ncbi.nlm.nih.gov/books/NBK591158/
+          </a>
+        </li>
       </ol>
 
       <div style="font-size:11px;color:var(--muted2);margin-top:10px;">
@@ -496,6 +642,11 @@
 
   <script>
     // ----- Parameters -----
+    // 1-year risk of a second seizure after a first unprovoked seizure (NIHR Evidence alert)
+    const RECURRENCE_1Y = 0.36;
+
+    // SUDEP incidence (general epilepsy population): ~1 per 1,000 person-years
+    const SUDEP_PER_1000_PY = 1.0;
     const CATCHMENT_POPULATION = 805000;
 
     const uplifts = [
@@ -534,15 +685,102 @@
       el("incText").textContent = rate;
 
       const base = (rate / 100000) * CATCHMENT_POPULATION;
+
+      // Epilepsy incidence proxy: proportion with a second unprovoked seizure within 1 year
+      const epilepsyYear = base * RECURRENCE_1Y;
+      const sudepYear = epilepsyYear * (SUDEP_PER_1000_PY / 1000);
       const { m, inc } = getMultiplier();
       const total = base * m;
 
+      const perWeekRaw = total / 52;
+
+      // DNA modifier (adds rebooking demand)
+      const dnaPct = Math.max(0, Number(el("dnaRate")?.value || 0));
+      const perWeek = Math.ceil(perWeekRaw * (1 + dnaPct / 100));
+
       el("baseYear").textContent = fmtInt(base);
+
+      // SUDEP panel
+      const recEl = el("rec1y");
+      if (recEl) recEl.textContent = String(Math.round(RECURRENCE_1Y * 100));
+      const srEl = el("sudepRate");
+      if (srEl) srEl.textContent = String(SUDEP_PER_1000_PY);
+
+      const epiEl = el("epilepsyYear");
+      if (epiEl) epiEl.textContent = fmtInt(epilepsyYear);
+
+      const sudEl = el("sudepYear");
+      if (sudEl) sudEl.textContent = sudepYear < 0.05 ? "<0.1" : fmt1(sudepYear);
+
+      const sudPerEl = el("sudepPer");
+      if (sudPerEl) {
+        sudPerEl.textContent = SUDEP_PER_1000_PY === 1.0 ? "1 / 1,000" : `${SUDEP_PER_1000_PY} / 1,000`;
+      }
       el("mult").textContent = "× " + fmt1(m);
       el("totalYear").textContent = fmtInt(total);
-      el("perWeek").textContent = fmt1(total / 52);
+      el("perWeek").textContent = fmt1(perWeekRaw);
       el("perMonth").textContent = fmt1(total / 12);
       el("included").textContent = inc.length ? inc.join(" · ") : "None (base only)";
+
+      // Weekly simulation panel
+      const simRefEl = el("simRefPerWeek");
+      if (simRefEl) simRefEl.textContent = String(perWeek);
+
+      const cap = Number(el("capacity")?.value || 0);
+      const capText = el("capText");
+      if (capText) capText.textContent = String(cap);
+
+      const b0 = Math.max(0, Number(el("baselineBacklog")?.value || 0));
+
+      // Waiting time estimate (fluid approximation)
+      // If capacity <= demand, backlog does not clear (diverges)
+      const waitEl = el("waitWeeks");
+      const net = cap - perWeek;
+      let waitWeeks;
+      if (cap <= 0) {
+        waitWeeks = Infinity;
+      } else if (net <= 0) {
+        waitWeeks = Infinity;
+      } else {
+        // time to clear current backlog under net clearance rate
+        waitWeeks = b0 / net;
+      }
+
+      if (waitEl) {
+        if (!isFinite(waitWeeks)) {
+          waitEl.textContent = "∞";
+        } else {
+          waitEl.textContent = waitWeeks > 156 ? ">156" : fmt1(waitWeeks);
+        }
+      }
+
+      // --- Intuitive wait for new referral entering today ---
+      const waitNewEl = el("waitNewReferral");
+      let waitNew;
+      if (cap <= 0) {
+        waitNew = Infinity;
+      } else {
+        waitNew = b0 / cap;
+      }
+
+      if (waitNewEl) {
+        if (!isFinite(waitNew)) {
+          waitNewEl.textContent = "∞";
+        } else {
+          waitNewEl.textContent = waitNew > 104 ? ">104" : fmt1(waitNew);
+        }
+      }
+
+      // Build backlog series for 52 weeks (include week 0)
+      const weeks = 52;
+      const series = new Array(weeks + 1);
+      series[0] = b0;
+      for (let w = 0; w < weeks; w++) {
+        const next = series[w] + perWeek - cap;
+        series[w + 1] = Math.max(0, next);
+      }
+
+      drawBacklogChart(series);
     }
 
     el("pop").textContent = fmtInt(CATCHMENT_POPULATION);
@@ -551,7 +789,156 @@
       el(id).addEventListener("input", recalc);
       el(id).addEventListener("change", recalc);
     });
+
+    // Weekly simulation controls
+    ["baselineBacklog","capacity","dnaRate"].forEach(id => {
+      const node = el(id);
+      if (!node) return;
+      node.addEventListener("input", recalc);
+      node.addEventListener("change", recalc);
+    });
+
     recalc();
+
+    // ----- Backlog chart (SVG) -----
+    function drawBacklogChart(series) {
+      const svg = el("backlogChart");
+      const status = el("chartStatus");
+      if (!svg || !Array.isArray(series) || series.length < 2) return;
+
+      // Clear
+      while (svg.lastChild) svg.removeChild(svg.lastChild);
+
+      const W = 780, H = 420;
+      const m = { l: 90, r: 30, t: 30, b: 90 };
+      const innerW = W - m.l - m.r;
+      const innerH = H - m.t - m.b;
+
+      // Background
+      const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      bg.setAttribute("x", "0"); bg.setAttribute("y", "0");
+      bg.setAttribute("width", String(W)); bg.setAttribute("height", String(H));
+      bg.setAttribute("fill", "rgba(0,0,0,.10)");
+      svg.appendChild(bg);
+
+      const maxY = Math.max(10, ...series);
+
+      // Expand y-axis range deliberately for visual slope comparison
+      // This prevents auto-tight scaling and makes slope changes clearer
+      const yMax = Math.max(maxY * 1.6, maxY + 50);
+
+      const xScale = (i) => m.l + (i / (series.length - 1)) * innerW;
+      const yScale = (v) => m.t + (1 - (v / yMax)) * innerH;
+
+      // Grid + axes
+      const axisColor = "rgba(255,255,255,.22)";
+      const gridColor = "rgba(255,255,255,.10)";
+      const textColor = "rgba(255,255,255,.72)";
+
+      const tickFont = 20;
+      const axisFont = 26;
+
+      const addLine = (x1,y1,x2,y2,stroke,w=1, dash=null) => {
+        const ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        ln.setAttribute("x1", x1); ln.setAttribute("y1", y1);
+        ln.setAttribute("x2", x2); ln.setAttribute("y2", y2);
+        ln.setAttribute("stroke", stroke);
+        ln.setAttribute("stroke-width", String(w));
+        if (dash) ln.setAttribute("stroke-dasharray", dash);
+        svg.appendChild(ln);
+      };
+
+      // Horizontal grid + y labels
+      const ticks = 5;
+      for (let t = 0; t <= ticks; t++) {
+        const val = (yMax * t) / ticks;
+        const y = yScale(val);
+        addLine(String(m.l), String(y), String(W - m.r), String(y), gridColor, 1, "4 6");
+
+        const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        tx.setAttribute("x", String(m.l - 10));
+        tx.setAttribute("y", String(y + 4));
+        tx.setAttribute("text-anchor", "end");
+        tx.setAttribute("font-size", String(tickFont));
+        tx.setAttribute("fill", textColor);
+        tx.textContent = fmtInt(val);
+        svg.appendChild(tx);
+      }
+
+      // Vertical grid + x labels (0, 13, 26, 39, 52)
+      const xMarks = [0, 13, 26, 39, 52];
+      for (const wk of xMarks) {
+        const i = Math.min(series.length - 1, wk);
+        const x = xScale(i);
+        addLine(String(x), String(m.t), String(x), String(H - m.b), gridColor, 1, "4 6");
+
+        const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        tx.setAttribute("x", String(x));
+        tx.setAttribute("y", String(H - m.b + 28));
+        tx.setAttribute("text-anchor", "middle");
+        tx.setAttribute("font-size", String(tickFont));
+        tx.setAttribute("fill", textColor);
+        tx.textContent = String(wk);
+        svg.appendChild(tx);
+      }
+
+      // Axes
+      addLine(String(m.l), String(m.t), String(m.l), String(H - m.b), axisColor, 2);
+      addLine(String(m.l), String(H - m.b), String(W - m.r), String(H - m.b), axisColor, 2);
+
+      // Axis labels
+      const ylab = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      ylab.setAttribute("x", String(16));
+      ylab.setAttribute("y", String(m.t + innerH / 2));
+      ylab.setAttribute("transform", `rotate(-90 16 ${m.t + innerH / 2})`);
+      ylab.setAttribute("font-size", String(axisFont));
+      ylab.setAttribute("fill", textColor);
+      ylab.textContent = "Outstanding first-fit appointments";
+      svg.appendChild(ylab);
+
+      const xlab = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      xlab.setAttribute("x", String(m.l + innerW / 2));
+      xlab.setAttribute("y", String(H - 12));
+      xlab.setAttribute("text-anchor", "middle");
+      xlab.setAttribute("font-size", String(axisFont));
+      xlab.setAttribute("fill", textColor);
+      xlab.textContent = "Weeks";
+      svg.appendChild(xlab);
+
+      // Line path
+      let d = "";
+      for (let i = 0; i < series.length; i++) {
+        const x = xScale(i);
+        const y = yScale(series[i]);
+        d += (i === 0 ? "M" : "L") + ` ${x.toFixed(2)} ${y.toFixed(2)} `;
+      }
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", d.trim());
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "rgba(255,255,255,.85)");
+      path.setAttribute("stroke-width", "2.6");
+      path.setAttribute("stroke-linecap", "round");
+      path.setAttribute("stroke-linejoin", "round");
+      svg.appendChild(path);
+
+      // End-point marker
+      const lastI = series.length - 1;
+      const cx = xScale(lastI);
+      const cy = yScale(series[lastI]);
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dot.setAttribute("cx", String(cx));
+      dot.setAttribute("cy", String(cy));
+      dot.setAttribute("r", "4.5");
+      dot.setAttribute("fill", "rgba(255,255,255,.90)");
+      svg.appendChild(dot);
+
+      if (status) {
+        const end = series[lastI];
+        const dir = end > series[0] ? "increases" : (end < series[0] ? "decreases" : "stays flat");
+        status.textContent = `Backlog ${dir} to ${fmtInt(end)} by week 52.`;
+      }
+    }
 
     // ----- Map rendering (Oxfordshire GeoJSON -> SVG path) -----
     function extractGeometry(gj) {
