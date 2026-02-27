@@ -89,6 +89,20 @@
     code{ background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.10); border-radius: 8px; padding: 2px 6px; font-size: 12px; color: rgba(255,255,255,.82); }
 
     footer{ margin-top: 16px; font-size: 11px; color: rgba(255,255,255,.42); }
+
+    /* ============================
+       Sticky right-side backlog card
+       ============================ */
+    .rightcol { display:flex; flex-direction:column; gap:16px; }
+    .stickyChart{
+      position: sticky;
+      top: 16px;
+      align-self: start;
+      max-height: calc(100vh - 32px);
+    }
+    @media (max-width: 720px){
+      .stickyChart{ position: static; max-height: none; }
+    }
   </style>
 </head>
 <body>
@@ -346,7 +360,7 @@
       </div>
 
       <!-- Right: figures -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="rightcol">
         <!-- Map -->
         <div class="card">
           <div class="maphead">
@@ -404,8 +418,8 @@
           <div class="mapfoot" id="mapStatus">Loading Oxfordshire boundary…</div>
         </div>
 
-        <!-- Backlog chart -->
-        <div class="card">
+        <!-- Backlog chart (STICKY) -->
+        <div class="card stickyChart">
           <div class="maphead">
             <div>
               <div class="maptitle">First-fit backlog over time</div>
@@ -547,131 +561,198 @@
       const status = el("chartStatus");
       if (!svg || !Array.isArray(series) || series.length < 2) return;
 
+      // Clear SVG
       while (svg.lastChild) svg.removeChild(svg.lastChild);
 
+      const NS = "http://www.w3.org/2000/svg";
       const W = 780, H = 420;
-      const m = { l: 90, r: 30, t: 30, b: 90 };
+      const m = { l: 78, r: 26, t: 26, b: 66 };
       const innerW = W - m.l - m.r;
       const innerH = H - m.t - m.b;
 
-      const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      bg.setAttribute("x", "0"); bg.setAttribute("y", "0");
-      bg.setAttribute("width", String(W)); bg.setAttribute("height", String(H));
-      bg.setAttribute("fill", "rgba(0,0,0,.10)");
-      svg.appendChild(bg);
-
-      const maxY = Math.max(10, ...series);
-      const yMax = Math.max(maxY * 1.6, maxY + 50);
-
-      const xScale = (i) => m.l + (i / (series.length - 1)) * innerW;
-      const yScale = (v) => m.t + (1 - (v / yMax)) * innerH;
-
-      const axisColor = "rgba(255,255,255,.22)";
-      const gridColor = "rgba(255,255,255,.10)";
-      const textColor = "rgba(255,255,255,.72)";
-
-      const tickFont = 20;
-      const axisFont = 26;
-
-      const addLine = (x1,y1,x2,y2,stroke,w=1, dash=null) => {
-        const ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        ln.setAttribute("x1", x1); ln.setAttribute("y1", y1);
-        ln.setAttribute("x2", x2); ln.setAttribute("y2", y2);
-        ln.setAttribute("stroke", stroke);
-        ln.setAttribute("stroke-width", String(w));
-        if (dash) ln.setAttribute("stroke-dasharray", dash);
-        svg.appendChild(ln);
+      // --- Helpers ---
+      const add = (name, attrs = {}, parent = svg) => {
+        const n = document.createElementNS(NS, name);
+        for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, String(v));
+        parent.appendChild(n);
+        return n;
       };
 
-      // Horizontal grid + y labels
-      const ticks = 5;
-      for (let t = 0; t <= ticks; t++) {
-        const val = (yMax * t) / ticks;
-        const y = yScale(val);
-        addLine(String(m.l), String(y), String(W - m.r), String(y), gridColor, 1, "4 6");
-
-        const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        tx.setAttribute("x", String(m.l - 12));
-        tx.setAttribute("y", String(y + 6));
-        tx.setAttribute("text-anchor", "end");
-        tx.setAttribute("font-size", String(tickFont));
-        tx.setAttribute("fill", textColor);
-        tx.textContent = fmtInt(val);
-        svg.appendChild(tx);
+      // "Nice" tick step (1,2,5 × 10^k)
+      function niceStep(rawStep) {
+        const pow = Math.pow(10, Math.floor(Math.log10(rawStep)));
+        const frac = rawStep / pow;
+        const niceFrac = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
+        return niceFrac * pow;
+      }
+      function niceCeil(x, step) {
+        return Math.ceil(x / step) * step;
       }
 
-      // Vertical grid + x labels (0, 13, 26, 39, 52)
+      // --- Data extents ---
+      const maxY = Math.max(0, ...series);
+      const minY = 0;
+
+      const tickCount = 6;
+      const rawStep = Math.max(1, (maxY - minY) / (tickCount - 1));
+      const step = niceStep(rawStep);
+      const yMax = Math.max(step * (tickCount - 1), niceCeil(maxY * 1.15, step));
+      const yMin = 0;
+
+      const xScale = (i) => m.l + (i / (series.length - 1)) * innerW;
+      const yScale = (v) => m.t + (1 - (v - yMin) / (yMax - yMin || 1)) * innerH;
+
+      // --- Background ---
+      add("rect", { x: 0, y: 0, width: W, height: H, fill: "rgba(0,0,0,.10)" });
+
+      // --- Defs: gradient fill + soft shadow ---
+      const defs = add("defs");
+
+      const grad = add("linearGradient", { id: "areaGrad", x1: "0", y1: "0", x2: "0", y2: "1" }, defs);
+      add("stop", { offset: "0%", "stop-color": "rgba(255,255,255,.20)" }, grad);
+      add("stop", { offset: "100%", "stop-color": "rgba(255,255,255,0)" }, grad);
+
+      const sh = add("filter", { id: "softShadow", x: "-30%", y: "-30%", width: "160%", height: "160%" }, defs);
+      add("feGaussianBlur", { in: "SourceAlpha", stdDeviation: "2.4", result: "blur" }, sh);
+      add("feColorMatrix", {
+        in: "blur",
+        type: "matrix",
+        values: "0 0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 .35 0",
+        result: "shadow"
+      }, sh);
+      const merge = add("feMerge", {}, sh);
+      add("feMergeNode", { in: "shadow" }, merge);
+      add("feMergeNode", { in: "SourceGraphic" }, merge);
+
+      const gridColor = "rgba(255,255,255,.10)";
+      const axisColor = "rgba(255,255,255,.20)";
+      const textColor = "rgba(255,255,255,.72)";
+      const tickFont = 13;
+      const axisFont = 14;
+
+      // --- Grid + Y ticks ---
+      for (let v = yMin; v <= yMax + 0.0001; v += step) {
+        const y = yScale(v);
+
+        add("line", {
+          x1: m.l, y1: y, x2: W - m.r, y2: y,
+          stroke: gridColor, "stroke-width": 1
+        });
+
+        add("text", {
+          x: m.l - 10,
+          y: y + 4,
+          "text-anchor": "end",
+          "font-size": tickFont,
+          fill: textColor
+        }).textContent = fmtInt(v);
+      }
+
+      // --- X ticks ---
       const xMarks = [0, 13, 26, 39, 52];
       for (const wk of xMarks) {
         const i = Math.min(series.length - 1, wk);
         const x = xScale(i);
-        addLine(String(x), String(m.t), String(x), String(H - m.b), gridColor, 1, "4 6");
 
-        const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        tx.setAttribute("x", String(x));
-        tx.setAttribute("y", String(H - m.b + 42));
-        tx.setAttribute("text-anchor", "middle");
-        tx.setAttribute("font-size", String(tickFont));
-        tx.setAttribute("fill", textColor);
-        tx.textContent = String(wk);
-        svg.appendChild(tx);
+        add("line", {
+          x1: x, y1: m.t, x2: x, y2: H - m.b,
+          stroke: "rgba(255,255,255,.07)", "stroke-width": 1
+        });
+
+        add("text", {
+          x: x,
+          y: H - m.b + 28,
+          "text-anchor": "middle",
+          "font-size": tickFont,
+          fill: textColor
+        }).textContent = String(wk);
       }
 
-      // Axes
-      addLine(String(m.l), String(m.t), String(m.l), String(H - m.b), axisColor, 2);
-      addLine(String(m.l), String(H - m.b), String(W - m.r), String(H - m.b), axisColor, 2);
+      // --- Axes ---
+      add("line", { x1: m.l, y1: m.t, x2: m.l, y2: H - m.b, stroke: axisColor, "stroke-width": 1.6 });
+      add("line", { x1: m.l, y1: H - m.b, x2: W - m.r, y2: H - m.b, stroke: axisColor, "stroke-width": 1.6 });
 
       // Axis labels
-      const ylab = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      ylab.setAttribute("x", String(24));
-      ylab.setAttribute("y", String(m.t + innerH / 2));
-      ylab.setAttribute("transform", `rotate(-90 24 ${m.t + innerH / 2})`);
-      ylab.setAttribute("font-size", String(axisFont));
-      ylab.setAttribute("fill", textColor);
-      ylab.textContent = "Outstanding first-fit appointments";
-      svg.appendChild(ylab);
+      add("text", {
+        x: 18,
+        y: m.t + innerH / 2,
+        transform: `rotate(-90 18 ${m.t + innerH / 2})`,
+        "font-size": axisFont,
+        fill: textColor
+      }).textContent = "Outstanding first-fit appointments";
 
-      const xlab = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      xlab.setAttribute("x", String(m.l + innerW / 2));
-      xlab.setAttribute("y", String(H - 18));
-      xlab.setAttribute("text-anchor", "middle");
-      xlab.setAttribute("font-size", String(axisFont));
-      xlab.setAttribute("fill", textColor);
-      xlab.textContent = "Weeks";
-      svg.appendChild(xlab);
+      add("text", {
+        x: m.l + innerW / 2,
+        y: H - 16,
+        "text-anchor": "middle",
+        "font-size": axisFont,
+        fill: textColor
+      }).textContent = "Weeks";
 
-      // Line path
+      // --- Build line path ---
       let d = "";
       for (let i = 0; i < series.length; i++) {
         const x = xScale(i);
         const y = yScale(series[i]);
         d += (i === 0 ? "M" : "L") + ` ${x.toFixed(2)} ${y.toFixed(2)} `;
       }
+      const lineD = d.trim();
 
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", d.trim());
-      path.setAttribute("fill", "none");
-      path.setAttribute("stroke", "rgba(255,255,255,.85)");
-      path.setAttribute("stroke-width", "2.6");
-      path.setAttribute("stroke-linecap", "round");
-      path.setAttribute("stroke-linejoin", "round");
-      svg.appendChild(path);
+      // --- Area under line ---
+      const x0 = xScale(0);
+      const xN = xScale(series.length - 1);
+      const yBase = yScale(0);
+      const areaD = `${lineD} L ${xN.toFixed(2)} ${yBase.toFixed(2)} L ${x0.toFixed(2)} ${yBase.toFixed(2)} Z`;
+      add("path", { d: areaD, fill: "url(#areaGrad)" });
 
-      // End-point marker
+      // --- Line ---
+      add("path", {
+        d: lineD,
+        fill: "none",
+        stroke: "rgba(255,255,255,.90)",
+        "stroke-width": 3,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+        filter: "url(#softShadow)"
+      });
+
+      // --- End marker + label bubble ---
       const lastI = series.length - 1;
+      const endVal = series[lastI];
       const cx = xScale(lastI);
-      const cy = yScale(series[lastI]);
-      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      dot.setAttribute("cx", String(cx));
-      dot.setAttribute("cy", String(cy));
-      dot.setAttribute("r", "4.5");
-      dot.setAttribute("fill", "rgba(255,255,255,.90)");
-      svg.appendChild(dot);
+      const cy = yScale(endVal);
+
+      add("circle", { cx, cy, r: 5, fill: "rgba(255,255,255,.95)" });
+
+      const labelText = fmtInt(endVal);
+      const bubblePadX = 10;
+      const approxTextW = Math.max(24, labelText.length * 8);
+      const bw = approxTextW + bubblePadX * 2 + 64; // extra for "Week 52: "
+      const bh = 28;
+
+      const bx = Math.min(W - m.r - bw, cx + 10);
+      const by = Math.max(m.t, cy - bh - 10);
+
+      add("rect", {
+        x: bx, y: by,
+        width: bw, height: bh,
+        rx: 10, ry: 10,
+        fill: "rgba(0,0,0,.35)",
+        stroke: "rgba(255,255,255,.18)",
+        "stroke-width": 1
+      });
+
+      add("text", {
+        x: bx + bw / 2,
+        y: by + 19,
+        "text-anchor": "middle",
+        "font-size": 13,
+        fill: "rgba(255,255,255,.88)"
+      }).textContent = `Week 52: ${labelText}`;
 
       if (status) {
-        const end = series[lastI];
-        const dir = end > series[0] ? "increases" : (end < series[0] ? "decreases" : "stays flat");
-        status.textContent = `Backlog ${dir} to ${fmtInt(end)} by week 52.`;
+        const dir = endVal > series[0] ? "increases" : (endVal < series[0] ? "decreases" : "stays flat");
+        status.textContent = `Backlog ${dir} to ${fmtInt(endVal)} by week 52.`;
       }
     }
 
